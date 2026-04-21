@@ -1,0 +1,3682 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Бот для прокачек от vadyms22</title>
+    <link rel="icon" href="https://img.sanishtech.com/u/7f1ab1e682964b5a1582054dd0e5ff08.jpg">
+    <style>
+        :root {
+            --bg-color: #020205;
+            --panel-bg: rgba(15, 23, 42, 0.92);
+            --dark-purple: #2a1b35;
+            --accent-neon-blue: #ff1493;
+            --accent-neon-purple: #ff1493;
+            --accent-soft-bg: rgba(255, 20, 147, 0.08);
+            --accent-hover-bg: rgba(255, 20, 147, 0.22);
+            --accent-soft-border: rgba(255, 20, 147, 0.1);
+            --section-accent: #6366f1;
+            --section-accent-bg: rgba(99, 102, 241, 0.08);
+            --section-accent-hover: rgba(99, 102, 241, 0.22);
+            --section-accent-panel: rgba(99, 102, 241, 0.12);
+            --section-accent-border: rgba(99, 102, 241, 0.25);
+            --participant-badge-bg: rgba(168, 85, 247, 0.18);
+            --participant-badge-border: rgba(168, 85, 247, 0.45);
+            --participant-badge-text: #f5d0fe;
+            --accent-red: #ef4444;
+            --accent-success: #22c55e;
+            --accent-success-soft: #86efac;
+            --twitch-mod: #00b894;
+            --twitch-vip: #e005b9;
+            --panel-border: rgba(255, 20, 147, 0.45);
+            --glow-blue: 0 0 0 transparent;
+            --glow-purple: 0 0 0 transparent;
+            --text-color: #f1f5f9;
+            --soft-light: #fbcfe8;
+        }
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .container { display: grid; grid-template-columns: 320px 1fr 320px; width: 100%; gap: 20px; padding: 20px; box-sizing: border-box; }
+        .panel {
+            background: var(--panel-bg);
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            border: 1px solid var(--panel-border);
+            box-shadow: var(--glow-blue), inset 0 0 20px rgba(0,0,0,0.5);
+            position: relative;
+            backdrop-filter: blur(10px);
+        }
+        .menu-panel {
+            overflow: hidden;
+        }
+        .menu-panel > *:not(.menu-ambient) {
+            position: relative;
+            z-index: 1;
+        }
+        .menu-ambient {
+            position: absolute;
+            inset: 0;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .menu-orb {
+            position: absolute;
+            border-radius: 999px;
+            filter: blur(10px);
+            opacity: 0.3;
+            background:
+                radial-gradient(circle at 30% 30%, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0.06) 22%, transparent 60%),
+                radial-gradient(circle at center, color-mix(in srgb, var(--accent-neon-blue) 70%, transparent) 0%, transparent 72%);
+            animation: menuFloat 14s ease-in-out infinite;
+        }
+        .menu-orb.one {
+            width: 170px;
+            height: 170px;
+            top: -28px;
+            left: -54px;
+            animation-duration: 15s;
+        }
+        .menu-orb.two {
+            width: 120px;
+            height: 120px;
+            right: -30px;
+            top: 26%;
+            opacity: 0.22;
+            animation-duration: 12s;
+            animation-delay: -4s;
+        }
+        .menu-orb.three {
+            width: 210px;
+            height: 210px;
+            bottom: -84px;
+            left: 18px;
+            opacity: 0.18;
+            animation-duration: 18s;
+            animation-delay: -8s;
+        }
+        .menu-grid {
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
+            background-size: 30px 30px;
+            mask-image: radial-gradient(circle at 50% 50%, rgba(0,0,0,0.9), transparent 82%);
+            opacity: 0.16;
+            animation: menuGridShift 16s linear infinite;
+        }
+        .menu-wave {
+            position: absolute;
+            left: -20%;
+            width: 140%;
+            height: 120px;
+            border-radius: 50%;
+            border: 1px solid color-mix(in srgb, var(--accent-neon-blue) 38%, transparent);
+            opacity: 0.24;
+            animation: menuWave 11s ease-in-out infinite;
+        }
+        .menu-wave.wave-a {
+            bottom: 20%;
+        }
+        .menu-wave.wave-b {
+            bottom: 8%;
+            animation-delay: -5s;
+            opacity: 0.16;
+        }
+        @keyframes menuFloat {
+            0%, 100% {
+                transform: translate3d(0, 0, 0) scale(1);
+            }
+            25% {
+                transform: translate3d(12px, 18px, 0) scale(1.06);
+            }
+            50% {
+                transform: translate3d(-10px, 36px, 0) scale(0.96);
+            }
+            75% {
+                transform: translate3d(16px, 8px, 0) scale(1.04);
+            }
+        }
+        @keyframes menuGridShift {
+            0% {
+                transform: translate3d(0, 0, 0);
+            }
+            100% {
+                transform: translate3d(30px, 30px, 0);
+            }
+        }
+        @keyframes menuWave {
+            0%, 100% {
+                transform: translateY(0) scaleX(1);
+            }
+            50% {
+                transform: translateY(-14px) scaleX(1.04);
+            }
+        }
+        .theme-switcher {
+            position: fixed;
+            top: 14px;
+            left: 18px;
+            z-index: 10001;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 12px;
+            border-radius: 14px;
+            background: rgba(15, 23, 42, 0.94);
+            border: 1px solid var(--panel-border);
+            box-shadow: inset 0 0 18px rgba(0,0,0,0.28);
+        }
+        .theme-switcher label {
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            color: var(--accent-neon-blue);
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+        .theme-switcher select {
+            background: var(--dark-purple);
+            color: var(--soft-light);
+            border: 1px solid var(--accent-neon-blue);
+            border-radius: 10px;
+            padding: 8px 10px;
+            font-size: 12px;
+            outline: none;
+        }
+        .menu-panel .btn-main, .menu-panel .btn-purple, .menu-panel .btn-codeword {
+            font-family: 'Orbitron', 'Inter', sans-serif;
+            font-weight: 800;
+            font-size: 13px;
+            letter-spacing: 0.06em;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(8px);
+        }
+        .modal-content {
+            background: var(--dark-purple);
+            border: 2px solid var(--accent-neon-blue);
+            box-shadow: 0 0 0 transparent, 0 0 0 transparent;
+            border-radius: 20px;
+            padding: 30px;
+            position: relative;
+            display: flex;
+            max-width: 95vw;
+            max-height: 90vh;
+        }
+        .btn-main {
+            width: 100%;
+            padding: 14px;
+            margin-bottom: 12px;
+            font-weight: 700;
+            border: 1px solid var(--accent-neon-blue);
+            border-radius: 12px;
+            cursor: pointer;
+            color: var(--accent-neon-blue);
+            transition: 0.4s;
+            background: var(--accent-soft-bg);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 11px;
+            text-shadow: none;
+            box-shadow: none;
+        }
+        .btn-codeword {
+            color: var(--soft-light);
+            border-color: var(--accent-neon-blue);
+            background: var(--accent-soft-bg);
+        }
+        .btn-codeword:hover {
+            color: #ffffff;
+            background: var(--accent-hover-bg);
+        }
+        .btn-main:hover {
+            background: var(--accent-hover-bg);
+            transform: scale(1.02);
+            box-shadow: none;
+            color: var(--soft-light);
+        }
+        .btn-purple {
+            border-color: var(--accent-neon-blue);
+            color: var(--accent-neon-blue);
+            text-shadow: none;
+            box-shadow: none;
+            background: var(--accent-soft-bg);
+        }
+        .btn-purple:hover {
+            background: var(--accent-hover-bg);
+            box-shadow: none;
+            color: var(--soft-light);
+        }
+        .btn-spin-mode.is-active-mode {
+            background: var(--accent-hover-bg) !important;
+            color: #ffffff !important;
+            border-color: var(--accent-neon-blue) !important;
+            border-width: 2px !important;
+            box-shadow: 0 0 0 2px var(--accent-neon-blue) inset !important;
+        }
+        .btn-spin-mode.is-active-mode::before {
+            content: '✓ ';
+            font-size: 13px;
+        }
+        .timer-display {
+            font-size: 42px;
+            font-family: 'Orbitron', monospace;
+            color: var(--accent-neon-blue);
+            text-align: center;
+            cursor: pointer;
+            padding: 15px;
+            background: var(--dark-purple);
+            border-radius: 15px;
+            border: 1px solid var(--accent-neon-blue);
+            text-shadow: none;
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.5);
+        }
+        .chat-container {
+            flex-grow: 1;
+            overflow: hidden;
+            background: var(--dark-purple);
+            border-radius: 15px;
+            padding: 0;
+            font-size: 14px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            border: 1px solid var(--accent-neon-blue);
+        }
+        #twitch-chat-frame {
+            width: 100%;
+            height: 100%;
+            min-height: 620px;
+            display: block;
+            border: 0;
+            background: var(--dark-purple);
+            border-radius: 14px;
+        }
+        .leader-item {
+            display: flex;
+            flex-direction: column;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid var(--accent-soft-border);
+            border-left: 4px solid var(--accent-neon-blue);
+            transition: 0.3s;
+            font-size: 12px;
+        }
+        .leader-item:hover {
+            border-color: var(--accent-neon-blue);
+            border-left-color: var(--accent-neon-blue);
+            background: var(--accent-soft-bg);
+        }
+        .part-chip {
+            font-size: 11px;
+            background: var(--accent-soft-bg);
+            padding: 5px 12px;
+            border-radius: 20px;
+            border: 1px solid var(--accent-neon-blue);
+            color: var(--accent-neon-blue);
+            font-weight: bold;
+            box-shadow: 0 0 0 transparent;
+        }
+        .close-x {
+            position: absolute;
+            right: 20px;
+            top: 10px;
+            font-size: 30px;
+            color: var(--accent-neon-blue);
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .close-x:hover { text-shadow: none; transform: scale(1.1); }
+        .win-card {
+            background: var(--dark-purple);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        input[type="number"], input[type="text"] {
+            background: var(--dark-purple) !important;
+            border: 1px solid var(--accent-neon-blue) !important;
+            color: var(--soft-light) !important;
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.5);
+            padding: 8px;
+            border-radius: 5px;
+        }
+        .stats-table th { color: var(--accent-neon-blue); padding: 12px; border-bottom: 2px solid var(--accent-neon-blue); text-align: left; }
+        .stats-table td { padding: 10px; border-bottom: 1px solid #222; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb { background: var(--accent-neon-blue); border-radius: 10px; box-shadow: 0 0 0 transparent; }
+        .win-response-msg {
+            background: rgba(15, 23, 42, 0.9) !important;
+            border-left: 4px solid var(--accent-neon-blue) !important;
+            border-radius: 8px !important;
+            box-shadow: 0 0 0 transparent !important;
+            color: #e0f2fe !important;
+            text-shadow: none !important;
+            padding: 8px 14px !important;
+            margin: 6px 0 !important;
+        }
+        #win-nick.winner-responded,
+        #win-status-label.winner-responded {
+            color: var(--accent-success-soft) !important;
+            text-shadow: 0 0 18px rgba(34, 197, 94, 0.7), 0 0 35px rgba(34, 197, 94, 0.45) !important;
+        }
+        #win-timer-label.timer-responded {
+            color: var(--accent-success-soft) !important;
+            background: rgba(34, 197, 94, 0.25) !important;
+            border-color: var(--accent-success) !important;
+            box-shadow: 0 0 28px rgba(34, 197, 94, 0.55), inset 0 0 12px rgba(34, 197, 94, 0.35) !important;
+            text-shadow: 0 0 15px rgba(34, 197, 94, 0.8) !important;
+        }
+        .middle-split {
+            display: flex;
+            gap: 15px;
+            height: 100%;
+        }
+        .red-participants {
+            flex: 1;
+            border: none;
+            border-radius: 18px;
+            background: var(--dark-purple);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .red-participants h4 {
+            margin: 0;
+            padding: 12px 15px;
+            background: var(--section-accent-panel);
+            color: var(--soft-light);
+            font-weight: 700;
+            font-size: 13px;
+            letter-spacing: 1px;
+            border-bottom: 1px solid var(--section-accent-border);
+        }
+        #full-participants-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px;
+            font-size: 14.5px;
+            line-height: 1.65;
+            color: #e0e7ff;
+            max-height: calc(20 * 36px);
+        }
+        #full-participants-list div {
+            padding: 5px 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .participant-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+        .participant-row.is-inactive {
+            opacity: 0.45;
+        }
+        .participant-name {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 0;
+        }
+        .participant-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 3px 8px;
+            border-radius: 999px;
+            background: var(--participant-badge-bg);
+            border: 1px solid var(--participant-badge-border);
+            color: var(--participant-badge-text);
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+        .participant-row label {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 18px;
+        }
+        .participant-row input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: #22c55e;
+            cursor: pointer;
+        }
+        .orange-chat {
+            flex: 1;
+            border: 1px solid var(--panel-border);
+            border-radius: 18px;
+            background: var(--dark-purple);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .orange-chat h3 {
+            margin: 12px 15px 8px;
+            color: var(--accent-neon-blue);
+            text-shadow: none;
+        }
+        .red-participants .btn-main {
+            border-color: var(--section-accent);
+            color: var(--section-accent);
+            background: var(--section-accent-bg);
+        }
+        .red-participants .btn-main:hover {
+            background: var(--section-accent-hover);
+            color: var(--soft-light);
+        }
+        .import-modal-content {
+            width: min(1320px, 96vw);
+            min-height: 520px;
+            padding: 0;
+            overflow: hidden;
+            background: #262626;
+            border-color: rgba(255, 255, 255, 0.08);
+        }
+        .import-layout {
+            display: grid;
+            grid-template-columns: 1fr 1.25fr;
+            width: 100%;
+            min-height: 520px;
+        }
+        .import-sidebar {
+            padding: 28px 30px 20px;
+            background: #262626;
+            border-right: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .import-main {
+            padding: 28px 30px 20px;
+            display: flex;
+            flex-direction: column;
+            background: #262626;
+        }
+        .import-example {
+            margin: 0 0 12px;
+            color: #f5f5f5;
+            font-weight: 700;
+            font-size: 1rem;
+        }
+        .import-code {
+            margin-top: 0;
+            padding: 16px;
+            border-radius: 6px;
+            background: #1f1f1f;
+            color: #f5f5f5;
+            line-height: 1.6;
+            white-space: pre-line;
+            min-height: 108px;
+        }
+        .import-textarea {
+            width: 100%;
+            flex: 1;
+            min-height: 360px;
+            resize: none;
+            background: #2e2e2e;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            color: #f5f5f5;
+            padding: 14px;
+            font: inherit;
+            line-height: 1.5;
+            box-sizing: border-box;
+        }
+        .import-textarea::placeholder {
+            color: #8f8f8f;
+        }
+        .import-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            margin-top: 16px;
+        }
+        .import-save {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #f5f5f5;
+            margin-left: auto;
+        }
+        .import-save input {
+            width: 20px;
+            height: 20px;
+            accent-color: #3b82f6;
+        }
+        .import-apply {
+            width: auto;
+            min-width: 92px;
+            margin: 0;
+            padding-inline: 24px;
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.08);
+            color: rgba(255, 255, 255, 0.45);
+        }
+        .import-apply.is-ready {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.12);
+            color: #f3f4f6;
+        }
+        .auth-modal {
+            display: flex;
+            position: fixed;
+            inset: 0;
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+            background: rgba(2, 2, 5, 0.92);
+            backdrop-filter: blur(10px);
+        }
+        .auth-card {
+            width: min(430px, calc(100vw - 32px));
+            padding: 28px;
+            border-radius: 22px;
+            background: rgba(15, 23, 42, 0.96);
+            border: 1px solid rgba(255, 20, 147, 0.35);
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.4);
+        }
+        .auth-card h2 {
+            margin: 0 0 8px;
+            color: var(--accent-neon-blue);
+            letter-spacing: 1px;
+        }
+        .auth-card p {
+            margin: 0 0 18px;
+            color: #cbd5e1;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        .auth-form {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .auth-form input {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 12px 14px;
+            border-radius: 10px;
+        }
+        .auth-note {
+            margin-top: 12px;
+            color: #94a3b8;
+            font-size: 12px;
+        }
+        /* WHEEL CANVAS STYLES */
+        .wheel-container {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .wheel-arrow-container {
+            position: relative;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            margin-bottom: -15px;
+            z-index: 20;
+        }
+        .wheel-arrow-pointer {
+            width: 0;
+            height: 0;
+            border-left: 25px solid transparent;
+            border-right: 25px solid transparent;
+            border-top: 50px solid #fff;
+            filter: drop-shadow(0 0 10px rgba(255,255,255,0.5));
+        }
+        .wheel-nick-display {
+            position: absolute;
+            top: -60px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, var(--accent-neon-blue), rgba(255, 20, 147, 0.8));
+            color: #fff;
+            padding: 10px 25px;
+            border-radius: 12px;
+            font-size: 22px;
+            font-weight: 900;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            white-space: nowrap;
+            box-shadow: 0 0 30px rgba(255, 20, 147, 0.6), 0 0 60px rgba(255, 20, 147, 0.3);
+            z-index: 30;
+            animation: nickPulse 1.5s ease-in-out infinite;
+        }
+        @keyframes nickPulse {
+            0%, 100% { transform: translateX(-50%) scale(1); box-shadow: 0 0 30px rgba(255, 20, 147, 0.6); }
+            50% { transform: translateX(-50%) scale(1.05); box-shadow: 0 0 50px rgba(255, 20, 147, 0.8), 0 0 80px rgba(255, 20, 147, 0.4); }
+        }
+        .wheel-modal-content {
+            background: transparent;
+            border: none;
+            box-shadow: none;
+        }
+        .wheel-arrow-container {
+            position: relative;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            margin-bottom: -15px;
+            z-index: 20;
+        }
+        .wheel-arrow-pointer {
+            width: 0;
+            height: 0;
+            border-left: 25px solid transparent;
+            border-right: 25px solid transparent;
+            border-top: 50px solid #fff;
+            filter: drop-shadow(0 0 10px rgba(255,255,255,0.5));
+        }
+        .wheel-nick-display {
+            position: absolute;
+            top: -60px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, var(--accent-neon-blue), rgba(255, 20, 147, 0.8));
+            color: #fff;
+            padding: 10px 25px;
+            border-radius: 12px;
+            font-size: 22px;
+            font-weight: 900;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            white-space: nowrap;
+            box-shadow: 0 0 30px rgba(255, 20, 147, 0.6), 0 0 60px rgba(255, 20, 147, 0.3);
+            z-index: 30;
+            animation: nickPulse 1.5s ease-in-out infinite;
+        }
+        @keyframes nickPulse {
+            0%, 100% { transform: translateX(-50%) scale(1); box-shadow: 0 0 30px rgba(255, 20, 147, 0.6); }
+            50% { transform: translateX(-50%) scale(1.05); box-shadow: 0 0 50px rgba(255, 20, 147, 0.8), 0 0 80px rgba(255, 20, 147, 0.4); }
+        }
+        .wheel-controls {
+            background: transparent;
+            border: none;
+            box-shadow: none;
+        }
+        .wheel-controls h3 {
+            background: linear-gradient(90deg, var(--accent-neon-blue), rgba(255, 20, 147, 0.6));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 16px;
+            font-weight: 900;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin: 0 0 12px 0;
+        }
+        #elim-log {
+            background: rgba(255, 20, 147, 0.1);
+            border: 1px solid var(--accent-neon-blue);
+            border-radius: 8px;
+            padding: 10px;
+            min-height: 28px;
+            font-size: 15px;
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(255, 20, 147, 0.5);
+        }
+        .wheel-btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .wheel-btn-row {
+            display: flex;
+            gap: 8px;
+        }
+        .wheel-btn-row .btn-main {
+            flex: 1;
+            margin-bottom: 0;
+        }
+        @keyframes textGlow {
+            0%, 100% {
+                text-shadow: 0 0 15px rgba(255, 20, 147, 0.8), 0 0 30px rgba(255, 20, 147, 0.6), 0 0 45px rgba(255, 20, 147, 0.4);
+                opacity: 1;
+                transform: scale(1);
+                filter: brightness(1.3);
+            }
+            50% {
+                text-shadow: 0 0 25px rgba(255, 20, 147, 1), 0 0 50px rgba(255, 20, 147, 0.8), 0 0 75px rgba(255, 20, 147, 0.6), 0 0 100px rgba(255, 105, 180, 0.4);
+                opacity: 1;
+                transform: scale(1.08);
+                filter: brightness(1.5);
+            }
+        }
+        @keyframes borderGlow {
+            0%, 100% {
+                border-color: rgba(255,20,147,1);
+                box-shadow: 0 0 50px rgba(255,20,147,0.9), 0 0 100px rgba(255,20,147,0.6), inset 0 0 40px rgba(255,20,147,0.4);
+            }
+            50% {
+                border-color: rgba(255,105,180,1);
+                box-shadow: 0 0 70px rgba(255,20,147,1), 0 0 140px rgba(255,20,147,0.8), inset 0 0 60px rgba(255,20,147,0.6);
+            }
+        }
+        .animated-header {
+            font-size: 18px;
+            font-weight: 900;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            text-align: center;
+            padding: 14px 16px;
+            margin-bottom: 12px;
+            display: block;
+            width: 100%;
+            box-sizing: border-box;
+            background: linear-gradient(135deg, rgba(255,0,110,0.35), rgba(255,20,147,0.35));
+            border: 3px solid rgba(255,20,147,1);
+            border-radius: 14px;
+            animation: textGlow 1.2s ease-in-out infinite, pulseScale 1s ease-in-out infinite, borderGlow 1.5s ease-in-out infinite;
+            box-shadow: 0 0 50px rgba(255,20,147,0.9), 0 0 100px rgba(255,20,147,0.6), inset 0 0 40px rgba(255,20,147,0.4);
+            filter: brightness(1.2) saturate(1.3);
+        }
+        @keyframes pulseScale {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+        }
+        .user-nick-display {
+            position: fixed;
+            top: 14px;
+            right: 18px;
+            z-index: 10001;
+            font-size: 12px;
+            color: var(--accent-neon-blue);
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            padding: 8px 14px;
+            border-radius: 10px;
+            background: rgba(15, 23, 42, 0.94);
+            border: 1px solid var(--panel-border);
+            box-shadow: inset 0 0 18px rgba(0,0,0,0.28);
+            animation: textGlow 2s ease-in-out infinite;
+        }
+        @media (max-width: 980px) {
+            .import-layout {
+                grid-template-columns: 1fr;
+            }
+            .import-sidebar {
+                border-right: 0;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            }
+        }
+        /* SIMPLE PERCENTAGE ROULETTE STYLES */
+        .simple-roulette-btn {
+            background: linear-gradient(135deg, #f59e0b, #d97706) !important;
+            color: #fff !important;
+            border-color: #f59e0b !important;
+            font-size: 13px !important;
+            padding: 16px !important;
+            animation: simpleRoulettePulse 2s ease-in-out infinite;
+        }
+        .simple-roulette-btn:hover {
+            background: linear-gradient(135deg, #fbbf24, #f59e0b) !important;
+            transform: scale(1.03);
+        }
+        @keyframes simpleRoulettePulse {
+            0%, 100% { box-shadow: 0 0 15px rgba(245, 158, 11, 0.4); }
+            50% { box-shadow: 0 0 30px rgba(245, 158, 11, 0.7), 0 0 50px rgba(245, 158, 11, 0.3); }
+        }
+        #simple-roulette-modal .modal-content {
+            background: linear-gradient(135deg, #1a1a2e, #16213e) !important;
+            border: 2px solid #f59e0b !important;
+            box-shadow: 0 0 60px rgba(245, 158, 11, 0.4) !important;
+            flex-direction: column;
+            width: 100vw !important;
+            height: 100vh !important;
+            max-width: 100vw !important;
+            max-height: 100vh !important;
+            border-radius: 0 !important;
+            overflow-y: auto;
+            padding: 30px 40px;
+            box-sizing: border-box;
+            align-items: center;
+        }
+        .simple-roulette-title {
+            color: #f59e0b;
+            text-align: center;
+            margin: 0 0 20px;
+            font-size: 24px;
+            letter-spacing: 2px;
+            font-weight: 900;
+        }
+        .simple-roulette-inputs {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            width: 100%;
+            max-width: 400px;
+        }
+        .simple-roulette-input-group {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .simple-roulette-input-group label {
+            color: #f59e0b;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .simple-roulette-input-group input {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 12px 14px !important;
+            border-radius: 10px !important;
+            background: rgba(0,0,0,0.4) !important;
+            border: 1px solid rgba(245,158,11,0.5) !important;
+            color: #fff !important;
+            font-size: 18px !important;
+            font-weight: 700 !important;
+            text-align: center;
+        }
+        .simple-roulette-canvas-container {
+            position: relative;
+            width: 600px;
+            height: 600px;
+            margin: 0 auto 20px;
+        }
+        #simple-roulette-canvas {
+            border-radius: 50%;
+            box-shadow: 0 0 30px rgba(245, 158, 11, 0.5);
+            width: 600px;
+            height: 600px;
+        }
+        .simple-roulette-pointer {
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 18px solid transparent;
+            border-right: 18px solid transparent;
+            border-top: 35px solid #fff;
+            filter: drop-shadow(0 0 8px rgba(245, 158, 11, 0.8));
+            z-index: 10;
+        }
+        .simple-roulette-result {
+            text-align: center;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+        .simple-roulette-result-text {
+            font-size: 22px;
+            font-weight: 900;
+            color: #f59e0b;
+            text-shadow: 0 0 20px rgba(245, 158, 11, 0.8);
+        }
+        .simple-roulette-result-text.win {
+            color: #22c55e;
+            text-shadow: 0 0 20px rgba(34, 197, 94, 0.8);
+        }
+        .simple-roulette-result-text.lose {
+            color: #ef4444;
+            text-shadow: 0 0 20px rgba(239, 68, 68, 0.8);
+        }
+        /* SOUND SELECTOR STYLES */
+        .sound-selector-btn {
+            background: var(--accent-soft-bg) !important;
+            border-color: var(--accent-neon-blue) !important;
+            color: var(--accent-neon-blue) !important;
+            padding: 8px !important;
+            margin-bottom: 0 !important;
+            font-size: 16px !important;
+            min-width: 40px !important;
+            cursor: pointer !important;
+            transition: 0.3s !important;
+        }
+        .sound-selector-btn:hover {
+            background: var(--accent-hover-bg) !important;
+            transform: scale(1.1) !important;
+        }
+        .sound-popup {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(10, 10, 20, 0.98);
+            border: 1px solid var(--accent-neon-blue);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 8px;
+            min-width: 280px;
+            box-shadow: 0 0 30px rgba(0,0,0,0.8);
+            z-index: 10002;
+            display: none;
+        }
+        .sound-popup.show {
+            display: block;
+            animation: fadeInUp 0.2s ease;
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateX(-50%) translateY(10px); }
+            to { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+        .sound-option {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 10px;
+            border-radius: 8px;
+            margin-bottom: 4px;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: 0.2s;
+        }
+        .sound-option:hover {
+            background: rgba(255,20,147,0.1);
+            border-color: rgba(255,20,147,0.3);
+        }
+        .sound-option:last-child {
+            margin-bottom: 0;
+        }
+        .sound-name {
+            color: #e2e8f0;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .sound-play-btn {
+            background: rgba(34,197,94,0.2);
+            border: 1px solid rgba(34,197,94,0.4);
+            border-radius: 6px;
+            color: #22c55e;
+            padding: 4px 12px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .sound-play-btn:hover {
+            background: rgba(34,197,94,0.4);
+            transform: scale(1.05);
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
+        
+        .panel-with-bg {
+            position: relative;
+        }
+        
+        .panel-with-bg > * {
+            position: relative;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="theme-switcher">
+        <label for="theme-select">Цвет</label>
+        <select id="theme-select" onchange="applyTheme(this.value)">
+            <option value="pink">Розовый</option>
+            <option value="blue">Синий</option>
+            <option value="purple">Фиолетовый</option>
+            <option value="green">Зеленый</option>
+            <option value="red">Красный</option>
+            <option value="orange">Оранжевый</option>
+            <option value="yellow">Желтый</option>
+            <option value="cyan">Бирюзовый</option>
+        </select>
+        <div id="cloud-status" style="margin-left:12px; font-size:12px; color:#94a3b8;">Cloud: —</div>
+    </div>
+    <div class="container">
+        <div class="panel menu-panel">
+            <div class="menu-ambient" aria-hidden="true">
+                <div class="menu-orb one"></div>
+                <div class="menu-orb two"></div>
+                <div class="menu-orb three"></div>
+                <div class="menu-grid"></div>
+                <div class="menu-wave wave-a"></div>
+                <div class="menu-wave wave-b"></div>
+            </div>
+            <div style="flex: 1;"></div>
+            <button class="btn-main" onclick="resetAll()">Сброс участников</button>
+            <button class="btn-main btn-codeword" onclick="changeCodeword()">КОД: <span id="codeword-display">+</span></button>
+            <button class="btn-main btn-purple" onclick="openWheel()">РУЛЕТКА</button>
+            <button class="btn-main btn-purple" onclick="instantRoll()">БЫСТРЫЙ РОЛЛ</button>
+            <button class="btn-main" onclick="openStats()">АНАЛИТИКА ПРОЕКТОВ</button>
+            <button class="btn-main" onclick="openHistory()">ИСТОРИЯ ВЫПАДЕНИЙ</button>
+            <div style="margin-top: auto;">
+                <div id="timer" class="timer-display" onclick="enableTimerEdit()">00:10:00</div>
+                <input type="text" id="timer-input" style="display:none; width: 100%; background: #000; color: #ff1493; border: 1px solid #ff1493; font-size: 30px; text-align: center;">
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 8px;">
+                    <button class="btn-main" style="padding:10px; margin-bottom:0; font-size:12px;" onclick="adjustTimer(60)">+1:00</button>
+                    <button class="btn-main" style="padding:10px; margin-bottom:0; font-size:12px;" onclick="adjustTimer(-60)">-1:00</button>
+                    <button class="btn-main" style="padding:10px; margin-bottom:0; font-size:12px;" onclick="adjustTimer(30)">+0:30</button>
+                    <button class="btn-main" style="padding:10px; margin-bottom:0; font-size:12px;" onclick="adjustTimer(-30)">-0:30</button>
+                </div>
+                <button class="btn-main" style="margin-top:8px; width:100%;" onclick="toggleTimer()">СТАРТ / ПАУЗА</button>
+                <div style="position:relative; margin-top:8px;">
+                    <button class="btn-main sound-selector-btn" onclick="toggleSoundPopup()">🔊</button>
+                    <div id="sound-popup" class="sound-popup">
+                        <div style="color:var(--accent-neon-blue); font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px; text-align:center;">Выбор озвучки таймера</div>
+                        <div class="sound-option">
+                            <span class="sound-name">🔔 Классический звонок</span>
+                            <button class="sound-play-btn" onclick="playSoundPreview('bell')">▶ PLAY</button>
+                        </div>
+                        <div class="sound-option">
+                            <span class="sound-name">🚨 Сирена</span>
+                            <button class="sound-play-btn" onclick="playSoundPreview('siren')">▶ PLAY</button>
+                        </div>
+                        <div class="sound-option">
+                            <span class="sound-name">⏰ Будильник</span>
+                            <button class="sound-play-btn" onclick="playSoundPreview('alarm')">▶ PLAY</button>
+                        </div>
+                        <div class="sound-option">
+                            <span class="sound-name">🎵 Мелодия</span>
+                            <button class="sound-play-btn" onclick="playSoundPreview('melody')">▶ PLAY</button>
+                        </div>
+                        <div class="sound-option">
+                            <span class="sound-name">💥 Взрыв</span>
+                            <button class="sound-play-btn" onclick="playSoundPreview('explosion')">▶ PLAY</button>
+                        </div>
+                        <div class="sound-option">
+                            <span class="sound-name">🎺 Фанфары</span>
+                            <button class="sound-play-btn" onclick="playSoundPreview('fanfare')">▶ PLAY</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="panel panel-with-bg" style="padding: 15px;">
+            <div class="animated-header" id="participation-header">ДЛЯ УЧАСТВИЯ В ПРОКАЧКЕ "<span id="header-codeword">+</span>" В ЧАТ!</div>
+            <div class="middle-split">
+                <div class="red-participants">
+                    <h4>СПИСОК УЧАСТНИКОВ <span id="user-count" style="font-size: 18px; color: var(--accent-neon-blue); font-weight: 800;">0</span></h4>
+                    <div id="full-participants-list"></div>
+                    <button class="btn-main" style="margin: 10px 12px; width: calc(100% - 24px);" onclick="copyParticipants()">СКОПИРОВАТЬ УЧАСТНИКОВ</button>
+                </div>
+                <div class="orange-chat">
+                    <h3>TWITCH CHAT VADYMS22</h3>
+                    <div class="chat-container">
+                        <iframe id="twitch-chat-frame" title="Twitch chat for vadyms22" loading="lazy" allow="clipboard-write"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="panel panel-with-bg">
+            <h3 style="margin:0 0 15px 0; color: var(--accent-neon-blue); text-shadow: none;">ТОП (ВЫВОДЫ)</h3>
+            <div id="leaderboard" style="overflow-y:auto; flex-grow: 1;"></div>
+            <div onclick="openAdminLogin()" style="position:absolute; bottom:2px; left:50%; transform:translateX(-50%); width:160px; height:22px; cursor:default; z-index:10000; background:transparent; border:none; outline:none;"></div>
+        </div>
+    </div>
+    <div id="history-modal" class="modal"><div class="modal-content" style="flex-direction: column; min-width: 950px; height: 80vh;"><div class="close-x" onclick="closeModals()">&times;</div><h2 style="color: var(--accent-neon-blue); margin: 0; text-shadow: none;">Полная история выпадений</h2><div style="width: 100%; overflow-y: auto; margin-top: 20px;"><table class="stats-table" style="width: 100%; border-collapse: collapse;"><thead><tr><th style="padding: 12px;">Дата</th><th style="padding: 12px;">Никнейм</th><th style="padding: 12px;">Telegram</th><th style="padding: 12px;">Проект</th><th style="padding: 12px;">Выводы (₽)</th><th style="padding: 12px;">Депы (₽)</th><th style="padding: 12px;">Рероллы</th><th style="padding: 12px;">Действие</th></tr></thead><tbody id="history-body"></tbody></table></div></div></div>
+    <div id="stats-modal" class="modal"><div class="modal-content" style="flex-direction: column; min-width: 750px; max-height: 80vh;"><div class="close-x" onclick="closeModals()">&times;</div><h2 style="color: var(--accent-neon-blue); margin: 0; text-shadow: none;">Статистика по сайтам</h2><div style="width: 100%; overflow-y: auto; margin-top: 20px;"><table class="stats-table" style="width: 100%; border-collapse: collapse;"><thead><tr><th>Проект / Сайт</th><th>Побед</th><th>Общ. Выводы (₽)</th><th>Общ. Депозиты (₽)</th><th>Действие</th></tr></thead><tbody id="stats-body"></tbody></table></div></div></div>
+            <div id="wheel-modal" class="modal"><div class="modal-content"><div class="close-x" onclick="closeModals()">&times;</div><div class="wheel-container"><div class="wheel-arrow-container"><div class="wheel-arrow-pointer"></div><div id="wheel-nick-display" class="wheel-nick-display">---</div></div><canvas id="wheelCanvas" width="700" height="700"></canvas></div><div class="wheel-controls" style="width: 340px; display: flex; flex-direction: column; gap: 12px; margin-left: 20px;"><h3 style="margin: 0; text-align: center; color: var(--accent-neon-blue);">Настройки</h3><div id="elim-log" style="text-align: center; color: var(--accent-neon-blue); font-weight: bold; min-height: 20px; font-size: 14px;"></div><button class="btn-main" onclick="openImportParticipants()">ВСТАВИТЬ СПИСОК УЧАСТНИКОВ</button><button class="btn-main" style="background: rgba(239, 68, 68, 0.12); border-color: #ef4444; color: #ef4444;" onclick="resetWheelParticipants()">🗑️ СБРОСИТЬ УЧАСТНИКОВ</button><div style="display:flex; gap:8px;"><button id="mode-elim" class="btn-main btn-purple btn-spin-mode" onclick="setSpinMode('elimination')">НА ВЫБЫВАНИЕ</button><button id="mode-normal" class="btn-main btn-purple btn-spin-mode" onclick="setSpinMode('normal')">ОБЫЧНЫЙ ВЫБОР</button></div><div style="text-align: center; margin: 10px 0;"><label style="font-size: 13px; color: #888;">Время (сек):</label>
+<div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 6px;">
+    <button class="btn-main" style="padding:6px 10px; margin-bottom:0; font-size:14px; min-width:36px;" onclick="adjustDur(-1)">-</button>
+    <input type="number" id="dur-input" min="1" max="60" value="5" style="width:50px; padding:4px; background:#0b1220; border:1px solid rgba(255,255,255,0.1); color:#e2e8f0; border-radius:4px; text-align:center; font-size:16px;">
+    <button class="btn-main" style="padding:6px 10px; margin-bottom:0; font-size:14px; min-width:36px;" onclick="adjustDur(1)">+</button>
+</div>
+<div style="display: flex; gap: 6px; margin-top: 8px; justify-content: center;">
+    <button class="btn-main" style="padding:5px 10px; margin-bottom:0; font-size:11px;" onclick="setDur(3)">3</button>
+    <button class="btn-main" style="padding:5px 10px; margin-bottom:0; font-size:11px;" onclick="setDur(5)">5</button>
+    <button class="btn-main" style="padding:5px 10px; margin-bottom:0; font-size:11px;" onclick="setDur(10)">10</button>
+    <button class="btn-main" style="padding:5px 10px; margin-bottom:0; font-size:11px;" onclick="setDur(15)">15</button>
+    <button class="btn-main" style="padding:5px 10px; margin-bottom:0; font-size:11px;" onclick="setDur(30)">30</button>
+</div></div><button id="roll-button" class="btn-main btn-purple" style="padding: 18px; font-size: 18px;" onclick="executeSpin()">КРУТИТЬ! 🚀</button><label style="display:flex; align-items:center; gap:8px; margin-top:6px;"><input id="autoskip-checkbox" type="checkbox"> <span style="font-size:13px; color:#ccc;">Автокрут (пока окно открыто)</span></label></div></div></div>
+    <div id="import-participants-modal" class="modal">
+        <div class="modal-content import-modal-content">
+            <div class="close-x" onclick="closeModals()">&times;</div>
+            <div class="import-layout">
+                <div class="import-sidebar">
+                    <p class="import-example">Example:</p>
+                    <div class="import-code" id="import-example-box">1 vadym\n2 player_two\n3 anotheruser\n4 testnick</div>
+                </div>
+                <div class="import-main">
+                    <textarea id="import-textarea" class="import-textarea" placeholder="Or paste text here"></textarea>
+                    <div class="import-actions">
+                        <button id="import-apply-button" class="btn-main import-apply" type="button" onclick="applyImportedParticipants()">Apply</button>
+                        <label class="import-save">
+                            <input id="import-replace-checkbox" type="checkbox">
+                            <span>Заменить текущих участников</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="auth-modal" class="auth-modal">
+        <div class="auth-card">
+            <h2>Вход</h2>
+            <p>Укажи канал Twitch. После этого подключится чат.</p>
+            <div class="auth-form">
+                <input type="text" id="auth-channel-input" placeholder="Канал Twitch без @" autocomplete="off">
+                <div style="display:flex; gap:8px;">
+                    <button class="btn-main btn-purple" type="button" onclick="applyAuthSettings()">ПОДКЛЮЧИТЬ</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="winner-screen" class="modal"><div class="modal-content" style="flex-direction: column; width: 90%; height: 90%; background: #05050a; padding: 40px;"><div class="close-x" onclick="closeModals()">&times;</div>
+        <div id="win-header-block" style="display: flex; justify-content: space-between; align-items: center; transition: 0.5s; gap: 20px;">
+            <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;">
+                <span id="win-status-label" style="color: var(--accent-neon-blue); font-weight: 800; letter-spacing: 2px; font-size: 13px; display: block; margin-bottom: 4px;">WINNER FOUND</span>
+                <h2 id="win-nick" style="font-size: 52px; margin: 0; color: #fff; text-shadow: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;">---</h2>
+                <div id="reroll-counter-display" style="color: var(--accent-neon-blue); font-size: 14px; font-weight: bold; margin-top: 6px;">Рероллов: 0</div>
+            </div>
+            <div id="win-timer-label" style="border: 1px solid var(--accent-neon-blue); padding: 10px 20px; border-radius: 10px; color: var(--accent-neon-blue); text-shadow: none; font-size: 24px; font-family: 'Orbitron'; flex-shrink: 0;">00:00:00</div>
+        </div>
+    <div class="win-grid" style="display: grid; grid-template-columns: 1fr 1fr 380px; gap: 20px; flex-grow: 1; margin-top: 20px; overflow: hidden;">
+        <div class="win-card" style="padding: 20px; border-radius: 20px; display: flex; flex-direction: column;">
+            <h4 style="margin-top:0; color: var(--accent-neon-blue);">Сообщения в этом стриме:</h4>
+            <div id="win-chat-history" style="overflow-y:auto; flex-grow:1;"></div>
+        </div>
+        <div id="win-stat-card" class="win-card" style="padding: 20px; border-radius: 20px; display: flex; flex-direction: column; border: 1px solid var(--accent-neon-blue);">
+            <h4 style="margin-top:0; color: var(--accent-neon-blue);">История игрока (Global):</h4>
+            <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px;">
+                <div style="display: flex; gap: 20px;"><div><small>Выигрышей:</small> <div id="win-count-stat" class="editable-stat" onclick="editWinnerCounter('count')" style="font-size: 20px; font-weight: bold;">0</div></div><div><small>Всего вывел:</small> <div id="win-sum-stat" class="editable-stat" onclick="editWinnerCounter('sum')" style="font-size: 20px; font-weight: bold; color: var(--accent-neon-blue);">0 ₽</div></div></div>
+                <div><small>Всего депозитов:</small> <div id="win-dep-stat" class="editable-stat" onclick="editWinnerCounter('dep')" style="font-size: 20px; font-weight: bold; color: var(--accent-neon-blue);">0 ₽</div></div>
+            </div>
+            <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px; padding-top:10px; border-top: 1px solid #333;">
+                <span style="font-size:11px; color:#94a3b8; white-space:nowrap;">Показать записей:</span>
+                <input id="win-history-range" type="range" min="5" max="10" step="1" value="5" oninput="updateWinnerHistoryLimit(this.value)" style="flex:1; accent-color: var(--accent-neon-blue);">
+                <span id="win-history-range-value" style="font-size:12px; color:var(--accent-neon-blue); font-weight:800; min-width:22px; text-align:right;">5</span>
+            </div>
+            <div id="win-drop-history" style="overflow-y:auto; flex-grow:1;"></div>
+        </div>
+        <div class="win-form" style="background: rgba(255,255,255,0.05); padding: 25px; border-radius: 20px; display: flex; flex-direction: column; gap: 12px; border: 1px solid var(--accent-neon-blue);">
+            <h3 style="margin:0; color: var(--accent-neon-blue);">Записать результат</h3>
+            <input type="number" id="win-amount-input" placeholder="Сумма вывода (RUB)">
+            <input type="number" id="win-deposit-input" placeholder="Сумма депозита (RUB)">
+            <input type="text" id="win-tg-input" placeholder="Telegram @username">
+            <select id="win-site-select" style="padding:8px; border-radius:6px; background:#0b1220; border:1px solid rgba(255,255,255,0.04); color:#e2e8f0;">
+                <option value="---">---</option>
+            </select>
+            <button class="btn-main btn-purple" style="margin-top:10px" onclick="saveWinnerStats()">СОХРАНИТЬ 📊</button>
+            <button class="btn-main" onclick="window.open('https://followage.showmasterokda.com/?user=' + currentWinner, '_blank')">ПОДПИСКИ 🔗</button>
+            <button class="btn-main" onclick="window.open('https://www.twitch.tv/popout/' + currentChannelName + '/viewercard/' + currentWinner + '?popout=', '_blank')">СООБЩЕНИЯ</button>
+            <button class="btn-main" onclick="showCloseConfirmModal()">ЗАКРЫТЬ</button>
+            <button class="btn-main btn-purple" onclick="reSpinToHome()">ПЕРЕКРУТИТЬ</button>
+        </div>
+    </div>
+    </div>
+    </div>
+
+    <script>
+        // Firebase config injected from Firebase Console
+        window.FIREBASE_CONFIG = {
+            apiKey: "AIzaSyDZYBxqh05e9HrEQXlaVYglP2RbPFdcivA",
+            authDomain: "bot-podkrutka.firebaseapp.com",
+            projectId: "bot-podkrutka",
+            storageBucket: "bot-podkrutka.firebasestorage.app",
+            messagingSenderId: "208233505545",
+            appId: "1:208233505545:web:fb12241a04ed6f52b2e9d8",
+            measurementId: "G-TCH4QTYH8V"
+        };
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/12.7.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore-compat.js"></script>
+    <script>
+        let leaders = JSON.parse(localStorage.getItem('bot_top_leaders')) || [];
+        let globalHistory = JSON.parse(localStorage.getItem('bot_global_history')) || [];
+        let participantProfiles = JSON.parse(localStorage.getItem('bot_participant_profiles')) || {};
+        let participants = new Set(); // активные участники (те, кто в розыгрыше)
+        let userMessages = {};
+        let timerSeconds = 600, timerRunning = false, winTimerActive = false;
+        let currentWinner = null, selectedSpinMode = 'normal';
+        let winnerHistoryLimit = Math.max(5, Math.min(10, parseInt(localStorage.getItem('bot_winner_history_limit') || '5', 10) || 5));
+        let rerollCount = 0;
+        let currentRotation = 0;
+        let currentCodeword = "+";
+        let selectedImportFormat = 'csv';
+        let autoSpinEnabled = false;
+        let wheelParticipants = [];
+        let isWheelSpinning = false; // флаг блокировки обновления wheelParticipants во время крута
+        let pendingParticipants = JSON.parse(localStorage.getItem('bot_pending_participants') || '[]'); // участники, которые написали кодовое пока рулетка открыта
+        const wheelColors = ['#0f172a','#1e2937','#334155','#475569','#64748b','#1e3a8a','#312e81','#4338ca','#4c1d95','#6b21a8'];
+        
+        // Color coding based on sum ranges
+        function getColorForSum(sum) {
+            if (sum >= 0 && sum <= 100) return '#00bfff'; // голубой (light blue)
+            if (sum >= 101 && sum <= 300) return '#a855f7'; // фиолетовый (purple)
+            if (sum >= 301 && sum <= 500) return '#ef4444'; // красный (red)
+            if (sum >= 501 && sum <= 1000) return '#eab308'; // желтый (yellow)
+            return '#64748b'; // default gray
+        }
+        let currentChannelName = localStorage.getItem('bot_channel_name') || '';
+        const MODS = [];
+        const VIPS = [];
+        const B_MOD = '[MODERATOR] ';
+        const B_VIP = '[VIP] ';
+        const B_OWNER = '[OWNER] ';
+        const FIREBASE_CONFIG = window.FIREBASE_CONFIG || {
+            apiKey: "AIzaSyDZYBxqh05e9HrEQXlaVYglP2RbPFdcivA",
+            authDomain: "bot-podkrutka.firebaseapp.com",
+            projectId: "bot-podkrutka",
+            storageBucket: "bot-podkrutka.firebasestorage.app",
+            messagingSenderId: "208233505545",
+            appId: "1:208233505545:web:a92a0c6b4df14439b2e9d8",
+            measurementId: "G-GFR7ZN8511"
+        };
+        const THEMES = {
+            pink: {
+                accent: '#ff1493',
+                accentSoft: '#fbcfe8',
+                dark: '#2a1b35',
+                border: 'rgba(255, 20, 147, 0.45)',
+                bgGlow: 'radial-gradient(circle at 50% 50%, #0b1a2e 0%, #020205 100%)'
+            },
+            blue: {
+                accent: '#38bdf8',
+                accentSoft: '#dbeafe',
+                dark: '#10243a',
+                border: 'rgba(56, 189, 248, 0.42)',
+                bgGlow: 'radial-gradient(circle at 50% 50%, #102a43 0%, #020205 100%)'
+            },
+            purple: {
+                accent: '#a855f7',
+                accentSoft: '#ede9fe',
+                dark: '#24143b',
+                border: 'rgba(168, 85, 247, 0.42)',
+                bgGlow: 'radial-gradient(circle at 50% 50%, #1f1235 0%, #020205 100%)'
+            },
+            green: {
+                accent: '#22c55e',
+                accentSoft: '#dcfce7',
+                dark: '#11281f',
+                border: 'rgba(34, 197, 94, 0.4)',
+                bgGlow: 'radial-gradient(circle at 50% 50%, #0f2f23 0%, #020205 100%)'
+            },
+            red: {
+                accent: '#ef4444',
+                accentSoft: '#fee2e2',
+                dark: '#34161d',
+                border: 'rgba(239, 68, 68, 0.42)',
+                bgGlow: 'radial-gradient(circle at 50% 50%, #3a151a 0%, #020205 100%)'
+            },
+            orange: {
+                accent: '#f97316',
+                accentSoft: '#ffedd5',
+                dark: '#362013',
+                border: 'rgba(249, 115, 22, 0.42)',
+                bgGlow: 'radial-gradient(circle at 50% 50%, #3c2512 0%, #020205 100%)'
+            },
+            yellow: {
+                accent: '#eab308',
+                accentSoft: '#fef9c3',
+                dark: '#352b12',
+                border: 'rgba(234, 179, 8, 0.42)',
+                bgGlow: 'radial-gradient(circle at 50% 50%, #3a3011 0%, #020205 100%)'
+            },
+            cyan: {
+                accent: '#06b6d4',
+                accentSoft: '#cffafe',
+                dark: '#112c33',
+                border: 'rgba(6, 182, 212, 0.42)',
+                bgGlow: 'radial-gradient(circle at 50% 50%, #10313a 0%, #020205 100%)'
+            },
+            lime: {
+                accent: '#84cc16',
+                accentSoft: '#e4ff89',
+                dark: '#1f2e0a',
+                border: 'rgba(132, 204, 22, 0.42)',
+                bgGlow: 'radial-gradient(circle at 50% 50%, #2d3a0f 0%, #020205 100%)'
+            },
+            indigo: {
+                accent: '#6366f1',
+                accentSoft: '#e0e7ff',
+                dark: '#1e1b4b',
+                border: 'rgba(99, 102, 241, 0.42)',
+                bgGlow: 'radial-gradient(circle at 50% 50%, #2e2b5f 0%, #020205 100%)'
+            },
+            rose: {
+                accent: '#f43f5e',
+                accentSoft: '#ffe4e6',
+                dark: '#3d1f24',
+                border: 'rgba(244, 63, 94, 0.42)',
+                bgGlow: 'radial-gradient(circle at 50% 50%, #4a2530 0%, #020205 100%)'
+            },
+            teal: {
+                accent: '#14b8a6',
+                accentSoft: '#ccfbf1',
+                dark: '#0d3d38',
+                border: 'rgba(20, 184, 166, 0.42)',
+                bgGlow: 'radial-gradient(circle at 50% 50%, #134e4a 0%, #020205 100%)'
+            }
+        };
+        let userRolesCache = {};
+        let cloudDb = null;
+        let cloudReady = false;
+        let appUnsubscribe = null;
+        let accounts = {}; // username -> { username, salt, passwordHash, createdAt, lastLogin }
+        let currentAccount = null;
+        let socket = null;
+        let rigUnsubscribe = null;
+        let participantsUnsubscribe = null; // для отписки от участников
+        
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playTick() { const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain(); osc.connect(gain); gain.connect(audioCtx.destination); osc.type = 'sine'; osc.frequency.setValueAtTime(1000, audioCtx.currentTime); gain.gain.setValueAtTime(0.05, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05); osc.start(); osc.stop(audioCtx.currentTime + 0.05); }
+        function playAlarm() { for(let i=0; i<3; i++) { setTimeout(() => { const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain(); osc.connect(gain); gain.connect(audioCtx.destination); osc.type = 'square'; osc.frequency.setValueAtTime(880, audioCtx.currentTime); gain.gain.setValueAtTime(0.1, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4); osc.start(); osc.stop(audioCtx.currentTime + 0.4); }, i * 500); } }
+        function getRoleData(user, badgeStr = '') { let low = user.toLowerCase(); if(badgeStr.includes('broadcaster') || low === currentChannelName.toLowerCase()) return { cls: 'user-owner', prefix: B_OWNER }; if(badgeStr.includes('moderator') || MODS.includes(low)) return { cls: 'user-mod', prefix: B_MOD }; if(badgeStr.includes('vip') || VIPS.includes(low)) return { cls: 'user-vip', prefix: B_VIP }; return { cls: '', prefix: '' }; }
+        function hasFirebaseConfig() {
+            // Cloud sync disabled — force local-only mode
+            return false;
+        }
+        function getProfileKey(name) { return String(name || '').trim().toLowerCase(); }
+        function getSavedTelegram(name) {
+            const key = getProfileKey(name);
+            return key ? participantProfiles[key]?.tg || '' : '';
+        }
+        function saveParticipantTelegram(name, tg) {
+            const key = getProfileKey(name);
+            const cleanTg = String(tg || '').trim();
+            if (!key || !cleanTg) return;
+            participantProfiles[key] = {
+                ...(participantProfiles[key] || {}),
+                name,
+                tg: cleanTg,
+            };
+            saveToStorage();
+        }
+        async function syncParticipantTelegramToCloud(name, tg) {
+            if (!cloudReady || !cloudDb) return;
+            const key = getProfileKey(name);
+            const cleanTg = String(tg || '').trim();
+            if (!key || !cleanTg) return;
+            try {
+                await cloudDb.collection('participantProfiles').doc(key).set({
+                    name,
+                    tg: cleanTg,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                }, { merge: true });
+            } catch (error) {
+                console.error('Cloud sync error:', error);
+            }
+        }
+        async function loadParticipantProfilesFromCloud() {
+            if (!cloudReady || !cloudDb) return;
+            try {
+                const snapshot = await cloudDb.collection('participantProfiles').get();
+                snapshot.forEach((doc) => {
+                    const data = doc.data() || {};
+                    if (data.tg) {
+                        participantProfiles[doc.id] = {
+                            ...(participantProfiles[doc.id] || {}),
+                            name: data.name || participantProfiles[doc.id]?.name || doc.id,
+                            tg: data.tg,
+                        };
+                    }
+                });
+                saveToStorage();
+                if (currentWinner) {
+                    const tgInput = document.getElementById('win-tg-input');
+                    if (tgInput && !tgInput.value.trim()) {
+                        tgInput.value = getSavedTelegram(currentWinner);
+                    }
+                }
+            } catch (error) {
+                console.error('Cloud load error:', error);
+            }
+        }
+        async function initCloudProfiles() {
+            if (!hasFirebaseConfig() || !window.firebase) return;
+            try {
+                if (!firebase.apps.length) {
+                    firebase.initializeApp(FIREBASE_CONFIG);
+                }
+                cloudDb = firebase.firestore();
+                cloudReady = true;
+                await loadParticipantProfilesFromCloud();
+                await loadAppStateFromCloud();
+                subscribeRigForCurrentChannel();
+                subscribeAppStateFromCloud();
+                subscribeAccountsFromCloud();
+                loadSiteOptionsFromCloud();
+                subscribeSiteOptionsFromCloud();
+                // Если канал уже выбран, подписываемся на участников
+                if (currentChannelName) {
+                    subscribeParticipantsFromCloud();
+                }
+            } catch (error) {
+                cloudReady = false;
+                console.error('Firebase init error:', error);
+            }
+        }
+
+        // ===== Simple Auth (no password) =====
+        async function handleInitialAuth() {
+            applyAuthSettings();
+        }
+
+        // ===== Site options =====
+        let siteOptions = JSON.parse(localStorage.getItem('bot_site_options') || '[]');
+
+        function saveSiteOptionsLocal() {
+            localStorage.setItem('bot_site_options', JSON.stringify(siteOptions || []));
+        }
+
+        async function saveSiteOptionsCloud() {
+            try {
+                if (cloudReady && cloudDb) {
+                    await cloudDb.collection('adminSettings').doc('sites').set({ options: siteOptions || [], updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
+                } else {
+                    saveSiteOptionsLocal();
+                }
+            } catch (e) { console.error('saveSiteOptionsCloud', e); }
+        }
+
+        function renderSiteSelects() {
+            const winSel = document.getElementById('win-site-select');
+            const manSel = document.getElementById('manual-site-select');
+            [winSel, manSel].forEach(sel => {
+                if (!sel) return;
+                const curr = sel.value || '---';
+                sel.innerHTML = '<option value="---">---</option>' + (siteOptions || []).map(s => `<option value="${escapeHtml(s)}">${s}</option>`).join('');
+                try { sel.value = curr; } catch(e){}
+            });
+        }
+
+        function renderSiteOptionsList() {
+            const list = document.getElementById('site-options-list');
+            if (!list) return;
+            list.innerHTML = (siteOptions || []).map(s => `<div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid rgba(255,255,255,0.03);"><span>${s}</span><button onclick="removeSiteOption('${encodeURIComponent(s)}')" style="background:none;border:1px solid rgba(255,255,255,0.06);padding:4px;border-radius:6px;color:var(--accent-neon-blue);">Удалить</button></div>`).join('') || '<div style="color:#666; padding:8px;">Нет сайтов</div>';
+        }
+
+        function escapeHtml(str) { return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+        function addSiteOptionFromInput() {
+            const inp = document.getElementById('site-option-input');
+            if (!inp) return;
+            const v = inp.value.trim();
+            if (!v) return alert('Введите название сайта');
+            if (!siteOptions.includes(v)) siteOptions.push(v);
+            saveSiteOptionsCloud();
+            renderSiteOptionsList();
+            renderSiteSelects();
+            inp.value = '';
+        }
+
+        function removeSiteOption(enc) {
+            const v = decodeURIComponent(enc);
+            siteOptions = (siteOptions || []).filter(x => x !== v);
+            saveSiteOptionsCloud();
+            renderSiteOptionsList();
+            renderSiteSelects();
+        }
+
+        function loadSiteOptionsFromCloud() {
+            if (!cloudReady || !cloudDb) { siteOptions = JSON.parse(localStorage.getItem('bot_site_options') || '[]'); renderSiteSelects(); renderSiteOptionsList(); return; }
+            cloudDb.collection('adminSettings').doc('sites').get().then(doc => {
+                if (doc.exists) {
+                    const d = doc.data() || {};
+                    siteOptions = d.options || [];
+                    saveSiteOptionsLocal();
+                    renderSiteSelects();
+                    renderSiteOptionsList();
+                } else {
+                    siteOptions = JSON.parse(localStorage.getItem('bot_site_options') || '[]');
+                    renderSiteSelects(); renderSiteOptionsList();
+                }
+            }).catch(e => { console.error('loadSiteOptionsFromCloud', e); siteOptions = JSON.parse(localStorage.getItem('bot_site_options') || '[]'); renderSiteSelects(); renderSiteOptionsList(); });
+        }
+
+        function subscribeSiteOptionsFromCloud() {
+            if (!cloudReady || !cloudDb) return;
+            try {
+                cloudDb.collection('adminSettings').doc('sites').onSnapshot(doc => {
+                    if (!doc.exists) return;
+                    const d = doc.data() || {};
+                    siteOptions = d.options || [];
+                    saveSiteOptionsLocal();
+                    renderSiteSelects(); renderSiteOptionsList();
+                });
+            } catch (e) { console.error('subscribeSiteOptionsFromCloud', e); }
+        }
+
+        function renderAccountsList() {
+            // Accounts disabled - no password
+        }
+        
+        function saveToStorage() {
+            localStorage.setItem('bot_top_leaders', JSON.stringify(leaders));
+            localStorage.setItem('bot_global_history', JSON.stringify(globalHistory));
+            localStorage.setItem('bot_participant_profiles', JSON.stringify(participantProfiles));
+            localStorage.setItem('bot_channel_name', currentChannelName);
+            // participants не сохраняем в localStorage, они идут из Firebase
+        }
+
+        // ===== Firebase app state sync (leaders + history) =====
+        let _cloudSaveTimeout = null;
+        function getAppDocId() {
+            const key = sanitizeChannelName(currentChannelName) || 'global';
+            return `appState_${key}`;
+        }
+
+        async function cloudSaveAppState() {
+            if (!cloudReady || !cloudDb) return;
+            try {
+                const snapshot = {
+                    leaders: leaders || [],
+                    globalHistory: globalHistory || [],
+                    participantProfiles: participantProfiles || {},
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                };
+                const docId = getAppDocId();
+                await cloudDb.collection('app').doc(docId).set(snapshot, { merge: true });
+                console.log('cloudSaveAppState: saved snapshot ->', docId);
+                try { setCloudStatus('saved', 'green'); } catch(e){}
+            } catch (e) {
+                console.error('cloudSaveAppState error:', e);
+                try { setCloudStatus('save error', 'red'); } catch(err){}
+            }
+        }
+
+        function cloudSaveAppStateDebounced() {
+            if (_cloudSaveTimeout) clearTimeout(_cloudSaveTimeout);
+            _cloudSaveTimeout = setTimeout(() => {
+                cloudSaveAppState();
+                _cloudSaveTimeout = null;
+            }, 800);
+        }
+
+        async function loadAppStateFromCloud() {
+            if (!cloudReady || !cloudDb) return;
+            try {
+                const docId = getAppDocId();
+                const doc = await cloudDb.collection('app').doc(docId).get();
+                if (!doc.exists) return;
+                const data = doc.data() || {};
+                console.log('loadAppStateFromCloud: data=', docId, data);
+                try { setCloudStatus('loaded', 'green'); } catch(e){}
+                if (Array.isArray(data.leaders) && data.leaders.length) leaders = data.leaders;
+                if (Array.isArray(data.globalHistory) && data.globalHistory.length) globalHistory = data.globalHistory;
+                if (data.participantProfiles) participantProfiles = Object.assign({}, participantProfiles, data.participantProfiles);
+                saveToStorage();
+                renderLeaderboard();
+            } catch (e) {
+                console.error('loadAppStateFromCloud error:', e);
+                try { setCloudStatus('load error', 'red'); } catch(err){}
+            }
+        }
+
+        function subscribeAppStateFromCloud() {
+            if (!cloudReady || !cloudDb) return;
+            try {
+                if (typeof appUnsubscribe === 'function') {
+                    try { appUnsubscribe(); } catch (e) { /* ignore */ }
+                    appUnsubscribe = null;
+                }
+                const docId = getAppDocId();
+                appUnsubscribe = cloudDb.collection('app').doc(docId).onSnapshot((doc) => {
+                    if (!doc.exists) return;
+                    const data = doc.data() || {};
+                    console.log('subscribeAppStateFromCloud: snapshot', docId, data);
+                    try { setCloudStatus('remote update', 'green'); } catch(e){}
+                    if (Array.isArray(data.leaders)) {
+                        leaders = data.leaders;
+                        renderLeaderboard();
+                    }
+                    if (Array.isArray(data.globalHistory)) {
+                        globalHistory = data.globalHistory;
+                        saveToStorage();
+                    }
+                    if (data.participantProfiles) participantProfiles = Object.assign({}, participantProfiles, data.participantProfiles);
+                });
+                try { loadAccountsFromCloud(); } catch(e){}
+                if (sanitizeChannelName(currentChannelName) === '0savelka0') {
+                    currentCodeword = '+';
+                    const cd = document.getElementById('codeword-display'); if (cd) cd.innerText = currentCodeword;
+                }
+            } catch (e) {
+                console.error('subscribeAppStateFromCloud error:', e);
+            }
+        }
+
+        // ===== Participants synchronization via separate doc =====
+        async function updateParticipantsInFirebase(newParticipantsArray, replace = false) {
+            if (!cloudReady || !cloudDb) {
+                // fallback: локальное обновление
+                if (replace) participants = new Set(newParticipantsArray);
+                else newParticipantsArray.forEach(p => participants.add(p));
+                syncParticipantsState();
+                return;
+            }
+            const docId = `participants_${sanitizeChannelName(currentChannelName)}`;
+            try {
+                if (replace) {
+                    await cloudDb.collection('participants').doc(docId).set({ list: newParticipantsArray }, { merge: false });
+                } else {
+                    // добавляем по одному, чтобы не затирать чужие добавления
+                    const batch = cloudDb.batch();
+                    for (let name of newParticipantsArray) {
+                        batch.set(cloudDb.collection('participants').doc(docId), { list: firebase.firestore.FieldValue.arrayUnion(name) }, { merge: true });
+                    }
+                    await batch.commit();
+                }
+            } catch (e) {
+                console.error('updateParticipantsInFirebase error', e);
+                // fallback локально
+                if (replace) participants = new Set(newParticipantsArray);
+                else newParticipantsArray.forEach(p => participants.add(p));
+                syncParticipantsState();
+            }
+        }
+
+        async function addParticipantToFirebase(name) {
+            // Если рулетка открыта, добавляем в ожидающие и сразу в основной список
+            const wheelModal = document.getElementById('wheel-modal');
+            if (wheelModal && wheelModal.style.display === 'flex') {
+                if (selectedSpinMode === 'elimination') {
+                    if (!pendingParticipants.includes(name)) {
+                        pendingParticipants.push(name);
+                        try { localStorage.setItem('bot_pending_participants', JSON.stringify(pendingParticipants)); } catch(e) {}
+                        console.log('Participant queued until elimination roulette closes:', name, pendingParticipants);
+                    }
+                    return;
+                }
+                if (!pendingParticipants.includes(name)) {
+                    pendingParticipants.push(name);
+                    // Сохраняем pendingParticipants в localStorage
+                    try { localStorage.setItem('bot_pending_participants', JSON.stringify(pendingParticipants)); } catch(e) {}
+                    console.log('Participant added to pending list:', name, pendingParticipants);
+                }
+                // Всегда добавляем в основной список сразу (чтобы сохранить после перезагрузки)
+            }
+            
+            // Добавляем в основной список участников
+            if (!cloudReady || !cloudDb) {
+                participants.add(name);
+                syncParticipantsState();
+                // Сохраняем в localStorage для локального режима
+                try { localStorage.setItem('bot_participants_local', JSON.stringify(Array.from(participants))); } catch(e) {}
+                return;
+            }
+            const docId = `participants_${sanitizeChannelName(currentChannelName)}`;
+            try {
+                await cloudDb.collection('participants').doc(docId).update({
+                    list: firebase.firestore.FieldValue.arrayUnion(name)
+                });
+            } catch (e) {
+                // если документа нет, создадим
+                await cloudDb.collection('participants').doc(docId).set({ list: [name] }, { merge: true });
+            }
+        }
+        
+        // Функция для обработки ожидающих участников при закрытии рулетки
+        async function processPendingParticipants() {
+            if (pendingParticipants.length === 0) return;
+            
+            console.log('Processing pending participants:', pendingParticipants);
+            
+            const participantsToAdd = [...pendingParticipants];
+            pendingParticipants = [];
+            try { localStorage.removeItem('bot_pending_participants'); } catch(e) {}
+            await updateParticipantsInFirebase(participantsToAdd, false);
+            syncParticipantsState();
+        }
+
+        async function removeParticipantFromFirebase(name) {
+            if (!cloudReady || !cloudDb) {
+                participants.delete(name);
+                syncParticipantsState();
+                return;
+            }
+            const docId = `participants_${sanitizeChannelName(currentChannelName)}`;
+            try {
+                await cloudDb.collection('participants').doc(docId).update({
+                    list: firebase.firestore.FieldValue.arrayRemove(name)
+                });
+            } catch (e) {
+                console.error('removeParticipantFromFirebase error', e);
+            }
+        }
+
+        function subscribeParticipantsFromCloud() {
+            if (!cloudReady || !cloudDb) {
+                // если облако не готово, загружаем из localStorage
+                const savedParticipants = JSON.parse(localStorage.getItem('bot_participants_local') || '[]');
+                participants = new Set(savedParticipants);
+                syncParticipantsState();
+                return;
+            }
+            if (participantsUnsubscribe) {
+                try { participantsUnsubscribe(); } catch(e) {}
+                participantsUnsubscribe = null;
+            }
+            const docId = `participants_${sanitizeChannelName(currentChannelName)}`;
+            participantsUnsubscribe = cloudDb.collection('participants').doc(docId).onSnapshot((doc) => {
+                if (doc.exists) {
+                    const data = doc.data();
+                    const newList = data.list || [];
+                    participants = new Set(newList);
+                } else {
+                    participants.clear();
+                }
+                syncParticipantsState();
+            }, (error) => {
+                console.error('Participants subscription error:', error);
+            });
+        }
+
+        function syncParticipantsState() {
+            document.getElementById('user-count').innerText = participants.size;
+            updateFullParticipantsList();
+            // Не обновляем wheelParticipants если рулетка сейчас крутится
+            if (!isWheelSpinning) {
+                wheelParticipants = getActiveParticipants();
+            }
+            saveToStorage();
+        }
+
+        function getActiveParticipants() {
+            return Array.from(participants);
+        }
+
+        function setCloudStatus(text, color) {
+            try {
+                const el = document.getElementById('cloud-status');
+                if (!el) return;
+                el.innerText = 'Cloud: ' + text;
+                el.style.color = color === 'green' ? '#34d399' : (color === 'red' ? '#ef4444' : '#94a3b8');
+            } catch (e) { console.warn('setCloudStatus error', e); }
+        }
+        function applyTheme(themeName) {
+            const theme = THEMES[themeName] || THEMES.pink;
+            const root = document.documentElement;
+            root.style.setProperty('--accent-neon-blue', theme.accent);
+            root.style.setProperty('--accent-neon-purple', theme.accent);
+            root.style.setProperty('--soft-light', theme.accentSoft);
+            root.style.setProperty('--dark-purple', theme.dark);
+            root.style.setProperty('--panel-border', theme.border);
+            document.body.style.backgroundImage = theme.bgGlow;
+            localStorage.setItem('bot_theme_name', themeName);
+            const selector = document.getElementById('theme-select');
+            if (selector && selector.value !== themeName) {
+                selector.value = themeName;
+            }
+        }
+        function sanitizeChannelName(value) {
+            return String(value || '').trim().toLowerCase().replace(/^@+/, '').replace(/\s+/g, '').replace(/[^a-z0-9_]/g, '');
+        }
+        function updateChannelUi() {
+            const title = document.querySelector('.orange-chat h3');
+            if (title) {
+                title.textContent = currentChannelName ? `TWITCH CHAT ${currentChannelName.toUpperCase()}` : 'TWITCH CHAT';
+            }
+            document.title = currentChannelName
+                ? `Бот для прокачек от vadyms22 - ${currentChannelName}`
+                : 'Бот для прокачек от vadyms22 - BLUE NEON';
+            updateUserNickDisplay();
+        }
+        function updateUserNickDisplay() {
+            let display = document.querySelector('.user-nick-display');
+            if (!display) {
+                display = document.createElement('div');
+                display.className = 'user-nick-display';
+                document.body.appendChild(display);
+            }
+            display.textContent = currentChannelName ? currentChannelName.toUpperCase() : '---';
+        }
+        function updateParticipationHeader() {
+            const header = document.getElementById('participation-header');
+            if (header) {
+                header.textContent = `ДЛЯ УЧАСТВИЯ В ПРОКАЧКЕ "${currentCodeword}" В ЧАТ`;
+            }
+        }
+        function openAuthModal() {
+            document.getElementById('auth-channel-input').value = '';
+            document.getElementById('auth-modal').style.display = 'flex';
+        }
+        function openAuthHelp() {
+            alert('Ввод: укажите Twitch ник. Если такой аккаунт не зарегистрирован — введите пароль и нажмите ВОЙТИ/РЕГИСТРАЦИЯ чтобы создать локальный/облачный аккаунт. Пароли хранятся в зашифрованном виде (SHA-256 + salt).');
+        }
+        function closeAuthModal() {
+            document.getElementById('auth-modal').style.display = 'none';
+        }
+        function connectTwitchSocket() {
+            if (!currentChannelName) return;
+            if (socket) {
+                try { socket.close(); } catch (error) {}
+            }
+            socket = new WebSocket('wss://irc-ws.chat.twitch.tv:443');
+            socket.onopen = () => {
+                socket.send('CAP REQ :twitch.tv/tags');
+                socket.send('PASS SCHMOOPIIE');
+                socket.send('NICK justinfan123');
+                socket.send(`JOIN #${currentChannelName}`);
+            };
+            socket.onmessage = (event) => {
+                const data = event.data;
+                if (data.startsWith('PING')) {
+                    socket.send('PONG :tmi.twitch.tv');
+                    return;
+                }
+                if (!data.includes('PRIVMSG')) return;
+
+                let badgeStr = '';
+                let user = '';
+                let msg = '';
+                const messageMarker = `PRIVMSG #${currentChannelName} :`;
+                if (!data.includes(messageMarker)) return;
+
+                if (data.startsWith('@')) {
+                    const parts = data.split(' ');
+                    const rawTags = parts[0];
+                    if (rawTags.includes('badges=')) {
+                        badgeStr = rawTags.split('badges=')[1].split(';')[0];
+                    }
+                    user = parts[1].split('!')[0].substring(1);
+                    msg = data.split(messageMarker)[1].trim();
+                } else {
+                    const parts = data.split('!');
+                    user = parts[0].substring(1);
+                    msg = data.split(messageMarker)[1].trim();
+                }
+
+                userRolesCache[user.toLowerCase()] = badgeStr;
+                const normalizedMessage = msg.trim().toLowerCase();
+                const normalizedCodeword = currentCodeword.trim().toLowerCase();
+                const time = new Date().toLocaleTimeString();
+
+                if (!userMessages[user]) userMessages[user] = [];
+                userMessages[user].push({ time, text: msg });
+
+                if (normalizedMessage === normalizedCodeword) {
+                    addParticipantToFirebase(user);
+                }
+
+                if (currentWinner && user.toLowerCase() === currentWinner.toLowerCase()) {
+                    if (winTimerActive) {
+                        winTimerActive = false;
+                        const timerLabel = document.getElementById('win-timer-label');
+                        const statusLabel = document.getElementById('win-status-label');
+                        const nick = document.getElementById('win-nick');
+                        timerLabel.classList.add('timer-responded');
+                        statusLabel.innerText = 'WINNER RESPONDED!';
+                        statusLabel.classList.add('winner-responded');
+                        nick.classList.add('winner-responded');
+                    }
+
+                    const winnerScreen = document.getElementById('winner-screen');
+                    if (winnerScreen && winnerScreen.style.display === 'flex') {
+                        const history = document.getElementById('win-chat-history');
+                        if (history) {
+                            const newMsg = document.createElement('div');
+                            newMsg.className = 'win-response-msg';
+                            newMsg.innerHTML = `<small style="color:#555;">${time}</small> ${msg}`;
+                            history.insertBefore(newMsg, history.firstChild);
+                            history.scrollTop = 0;
+                        }
+                    }
+                }
+            };
+        }
+        async function applyAuthSettings() {
+            const channelValue = sanitizeChannelName(document.getElementById('auth-channel-input').value);
+            if (!channelValue) {
+                alert('Введите название канала.');
+                return;
+            }
+            currentChannelName = channelValue;
+            if (sanitizeChannelName(channelValue) === '0savelka0') {
+                currentCodeword = '+';
+                const cd = document.getElementById('codeword-display'); if (cd) cd.innerText = currentCodeword;
+            }
+            saveToStorage();
+            updateChannelUi();
+            initTwitchEmbed();
+            connectTwitchSocket();
+            try { await loadAppStateFromCloud(); subscribeAppStateFromCloud(); } catch(e) { console.warn('applyAuthSettings cloud sync:', e); }
+            // подписываемся на изменения участников
+            if (cloudReady && cloudDb) {
+                subscribeParticipantsFromCloud();
+            }
+            closeAuthModal();
+        }
+        
+        function recalculateLeadersFromHistory() {
+            const leaderMap = new Map();
+            globalHistory.forEach((h) => {
+                if (!h || h.isReroll || !h.name) return;
+                const key = h.name.toLowerCase();
+                if (!leaderMap.has(key)) {
+                    leaderMap.set(key, {
+                        name: h.name,
+                        amount: 0,
+                        deposits: 0,
+                        tg: '',
+                        site: '---'
+                    });
+                }
+                const leader = leaderMap.get(key);
+                leader.name = h.name || leader.name;
+                leader.amount += (typeof h.amount === 'number' ? h.amount : 0);
+                leader.deposits += (typeof h.deposit === 'number' ? h.deposit : 0);
+                if (h.tg && h.tg !== '---' && h.tg !== 'НЕТ ИНФОРМАЦИИ') leader.tg = h.tg;
+                if (h.site && h.site !== '---' && h.site !== 'НЕТ ИНФОРМАЦИИ') leader.site = h.site;
+            });
+            leaders = Array.from(leaderMap.values());
+        }
+        function renderLeaderboard() {
+            recalculateLeadersFromHistory();
+            leaders.sort((a,b) => b.amount - a.amount);
+            const container = document.getElementById('leaderboard');
+            container.innerHTML = '';
+            leaders.forEach((item, i) => {
+                container.innerHTML += `<div class="leader-item" onclick="openLeaderEditModal('${item.name.replace(/'/g, "\\'")}')" style="cursor:pointer;"><div class="leader-row" style="display:flex; justify-content:space-between; align-items:center;"><span><b>${i+1}.</b> ${item.name}</span><div><b style="color:${getColorForSum(item.amount)};">${item.amount.toLocaleString()} ₽</b></div></div></div>`;
+            });
+            saveToStorage();
+        }
+        
+        function copyParticipants() { 
+            const list = getActiveParticipants().map((u, i) => `${i + 1}. ${u}`).join('\n'); 
+            if (list) { 
+                navigator.clipboard.writeText(list).then(() => { alert('Список участников скопирован в буфер обмена!'); }).catch(err => { alert('Ошибка при копировании: ' + err); }); 
+            } else { 
+                alert('Список участников пуст!'); 
+            } 
+        }
+        function toggleParticipantActive(name, active) {
+            if (active) {
+                addParticipantToFirebase(name);
+            } else {
+                removeParticipantFromFirebase(name);
+            }
+        }
+        function updateFullParticipantsList() {
+            const container = document.getElementById('full-participants-list');
+            if (!container) return;
+            const arr = Array.from(participants);
+            let html = '';
+            arr.forEach((u, i) => {
+                html += `<div class="participant-row"><span class="participant-name"><span class="participant-badge">УЧАСТВУЕТ</span><span>${i+1}. <b>${u}</b></span></span><label><input type="checkbox" checked onchange="toggleParticipantActive('${u.replace(/'/g, "\\'")}', this.checked)"></label></div>`;
+            });
+            container.innerHTML = html || '<div style="color:#666; text-align:center; padding:30px 0;">Нет участников</div>';
+        }
+        function initTwitchEmbed() {
+            const frame = document.getElementById('twitch-chat-frame');
+            if (!frame) return;
+            const safeChannelName = sanitizeChannelName(currentChannelName);
+            if (!safeChannelName || !/^[a-z0-9_]{3,25}$/.test(safeChannelName)) {
+                frame.removeAttribute('src');
+                return;
+            }
+            const parentDomain = window.location.hostname || 'localhost';
+            frame.src = `https://www.twitch.tv/embed/${safeChannelName}/chat?parent=${encodeURIComponent(parentDomain)}&darkpopout`;
+        }
+        function updateTimerDisplay() { const h = Math.floor(timerSeconds/3600).toString().padStart(2,'0'), m = Math.floor((timerSeconds%3600)/60).toString().padStart(2,'0'), s = (timerSeconds%60).toString().padStart(2,'0'); document.getElementById('timer').innerText = `${h}:${m}:${s}`; }
+        function toggleTimer() { timerRunning = !timerRunning; if(audioCtx.state === 'suspended') audioCtx.resume(); }
+        function adjustTimer(delta) {
+            timerSeconds = Math.max(0, timerSeconds + delta);
+            updateTimerDisplay();
+        }
+        function adjustDur(delta) {
+            const input = document.getElementById('dur-input');
+            if (!input) return;
+            let val = parseInt(input.value) || 5;
+            val = Math.max(1, Math.min(60, val + delta));
+            input.value = val;
+        }
+        function setDur(val) {
+            const input = document.getElementById('dur-input');
+            if (!input) return;
+            input.value = Math.max(1, Math.min(60, val));
+        }
+        function adjustSimpleDur(delta) {
+            const input = document.getElementById('simple-dur-input');
+            if (!input) return;
+            let val = parseInt(input.value) || 4;
+            val = Math.max(1, Math.min(60, val + delta));
+            input.value = val;
+        }
+        function setSimpleDur(val) {
+            const input = document.getElementById('simple-dur-input');
+            if (!input) return;
+            input.value = Math.max(1, Math.min(60, val));
+        }
+        function enableTimerEdit() { timerRunning = false; const d = document.getElementById('timer'), i = document.getElementById('timer-input'); d.style.display = 'none'; i.style.display = 'block'; i.value = d.innerText; i.focus(); i.onblur = () => { let p = i.value.split(':').map(Number).reverse(); timerSeconds = (p[0]||0) + (p[1]||0)*60 + (p[2]||0)*3600; updateTimerDisplay(); i.style.display = 'none'; d.style.display = 'block'; }; }
+        function changeCodeword() { let newWord = prompt('Введите новое кодовое слово (сейчас: ' + currentCodeword + '):'); if (newWord !== null && newWord.trim() !== '') { currentCodeword = newWord.trim(); document.getElementById('codeword-display').innerText = currentCodeword; updateParticipationHeader(); } }
+        function parseImportedParticipants(raw, format) {
+            if (!raw.trim()) return [];
+            if (format === 'json') {
+                const parsed = JSON.parse(raw);
+                const source = Array.isArray(parsed) ? parsed : Array.isArray(parsed.participants) ? parsed.participants : [];
+                return source.map(item => typeof item === 'string' ? item.trim() : String(item.name || item.username || item.user || '').trim()).filter(Boolean);
+            }
+            return raw
+                .split(/\r?\n/)
+                .map(line => line.trim())
+                .filter(Boolean)
+                .map(line => line.replace(/^\d+\s*([.):-])?\s*/, '').trim())
+                .filter(Boolean);
+        }
+        function openImportParticipants() {
+            const importModal = document.getElementById('import-participants-modal');
+            importModal.style.display = 'flex';
+            setImportFormat('csv');
+            updateImportApplyState();
+        }
+        function setImportFormat(format) {
+            selectedImportFormat = format;
+            const exampleBox = document.getElementById('import-example-box');
+            const textarea = document.getElementById('import-textarea');
+            if (exampleBox) {
+                exampleBox.textContent = format === 'json'
+                    ? '[\n  "vadym",\n  "player_two",\n  "anotheruser"\n]'
+                    : '1 vadym\n2 player_two\n3 anotheruser\n4 testnick';
+            }
+            if (textarea) {
+                textarea.placeholder = format === 'json' ? 'Or paste JSON here' : 'Or paste text here';
+            }
+        }
+        function updateImportApplyState() {
+            const button = document.getElementById('import-apply-button');
+            const textarea = document.getElementById('import-textarea');
+            const ready = textarea && textarea.value.trim().length > 0;
+            button.classList.toggle('is-ready', ready);
+        }
+        async function applyImportedParticipants() {
+            const raw = document.getElementById('import-textarea').value;
+            if (!raw.trim()) return;
+            let parsedNames = [];
+            try {
+                parsedNames = parseImportedParticipants(raw, selectedImportFormat);
+            } catch (error) {
+                alert('Ошибка импорта: ' + error.message);
+                return;
+            }
+            if (!parsedNames.length) {
+                alert('Не удалось найти участников в этом списке.');
+                return;
+            }
+            const replace = document.getElementById('import-replace-checkbox').checked;
+            // Добавляем только в рулетку (wheelParticipants), не трогаем основной список participants
+            wheelParticipants = Array.isArray(wheelParticipants) ? wheelParticipants : [];
+            if (replace) {
+                wheelParticipants = parsedNames.filter(Boolean);
+            } else {
+                const set = new Set(wheelParticipants.concat(parsedNames.filter(Boolean)));
+                wheelParticipants = Array.from(set);
+            }
+            // Сохраняем рулетку локально
+            try { localStorage.setItem('bot_wheel_participants', JSON.stringify(wheelParticipants)); } catch(e) { console.warn('wheel save error', e); }
+            document.getElementById('import-textarea').value = '';
+            document.getElementById('import-replace-checkbox').checked = false;
+            updateImportApplyState();
+            // Закрываем import modal и сразу открываем рулетку
+            document.getElementById('import-participants-modal').style.display = 'none';
+            openWheel();
+            alert(`Добавлено в рулетку: ${parsedNames.length}`);
+        }
+        function pasteParticipants() { openImportParticipants(); }
+        setInterval(() => { if (timerRunning && timerSeconds > 0) { timerSeconds--; updateTimerDisplay(); if(timerSeconds === 0) playAlarm(); } }, 1000);
+        function saveWinnerStats() { 
+            const amt = parseFloat(document.getElementById('win-amount-input').value) || 0; 
+            const dep = parseFloat(document.getElementById('win-deposit-input').value) || 0; 
+            const tg = document.getElementById('win-tg-input').value.trim(); 
+            const site = (document.getElementById('win-site-select') && document.getElementById('win-site-select').value) || '---'; 
+            if (tg) { 
+                saveParticipantTelegram(currentWinner, tg); 
+                syncParticipantTelegramToCloud(currentWinner, tg); 
+            } 
+            if(amt > 0 || dep > 0) { 
+                let existing = leaders.find(l => l.name.toLowerCase() === currentWinner.toLowerCase()); 
+                if(existing) { 
+                    existing.amount += amt; 
+                    if(!existing.deposits) existing.deposits = 0; 
+                    existing.deposits += dep; 
+                    if(tg) existing.tg = tg; 
+                    if(site !== '---') existing.site = site; 
+                } else { 
+                    leaders.push({name: currentWinner, amount: amt, deposits: dep, tg: tg, site: site}); 
+                } 
+            } 
+            // Записываем "НЕТ ИНФОРМАЦИИ" если поля пустые
+            const finalTg = tg && tg !== '---' ? tg : 'НЕТ ИНФОРМАЦИИ';
+            const finalSite = site && site !== '---' ? site : 'НЕТ ИНФОРМАЦИИ';
+            const finalAmt = amt;
+            const finalDep = dep;
+            
+            globalHistory.push({ 
+                name: currentWinner, 
+                amount: finalAmt, 
+                deposit: finalDep, 
+                site: finalSite, 
+                tg: finalTg, 
+                rerolls: rerollCount, 
+                date: new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString() 
+            }); 
+            rerollCount = 0; 
+            renderLeaderboard(); 
+            closeModals(); 
+            cloudSaveAppStateDebounced(); // сохраняем топ и историю
+        }
+        
+        function openStats() { const stats = {}; globalHistory.forEach(h => { if (h.isReroll) return; const siteName = h.site || '---'; if(!stats[siteName]) stats[siteName] = { count: 0, sum: 0, deps: 0 }; stats[siteName].count++; stats[siteName].sum += (h.amount || 0); stats[siteName].deps += (h.deposit || 0); }); const body = document.getElementById('stats-body'); body.innerHTML = ''; Object.keys(stats).sort().forEach(site => { body.innerHTML += `<tr><td><b>${site}</b></td><td>${stats[site].count}</td><td>${stats[site].sum.toLocaleString()} ₽</td><td>${stats[site].deps.toLocaleString()} ₽</td><td><button class="btn-edit-row" style="color:var(--accent-neon-blue); background:none; border:none; cursor:pointer;" onclick="editProjectName('${site}')" title="Переименовать проект">✏️</button><button class="btn-delete-row" style="color:red; background:none; border:none; cursor:pointer;" onclick="deleteProjectRecords('${site}')" title="Удалить все записи по проекту">🗑️</button></td></tr>`; }); document.getElementById('stats-modal').style.display = 'flex'; }
+        function editProjectName(oldName) { 
+            let newName = prompt('Новое название проекта:', oldName); 
+            if (newName && newName !== oldName) { 
+                globalHistory.forEach(h => { if (h.site === oldName) h.site = newName; }); 
+                leaders.forEach(l => { if (l.site === oldName) l.site = newName; }); 
+                saveToStorage(); 
+                openStats(); 
+                renderLeaderboard(); 
+            } 
+        }
+        function deleteProjectRecords(siteName) { 
+            if(confirm(`Удалить ВСЕ записи истории по проекту \"${siteName}\"? Это обновит статистику и топ.`)) { 
+                // Удаляем записи из истории
+                globalHistory = globalHistory.filter(h => h.site !== siteName); 
+                // Пересчитываем топ: удаляем или обновляем лидеров, у которых все записи были по этому проекту
+                leaders = leaders.filter(leader => {
+                    const leaderHistory = globalHistory.filter(h => h.name.toLowerCase() === leader.name.toLowerCase());
+                    return leaderHistory.length > 0; // оставляем только если есть другие записи
+                });
+                saveToStorage(); 
+                openStats(); 
+                renderLeaderboard();
+            } 
+        }
+        function openHistory() {
+            const body = document.getElementById('history-body');
+            body.innerHTML = '';
+            [...globalHistory].reverse().forEach((h, index) => {
+                const realIndex = globalHistory.length - 1 - index;
+                if (h.isReroll) {
+                    body.innerHTML += `<tr style="background:rgba(245,158,11,0.08);"><td><small>${h.date}</small></td><td style="color:#f59e0b; font-weight:bold;">🔄 ${h.name}</td><td style="color:#aaa;">${h.tg || '---'}</td><td style="color:#f59e0b; font-weight:bold;">БЫЛ РЕРОЛЬНУТ</td><td>—</td><td>—</td><td style="text-align:center;">${h.rerolls || 0}</td><td style="text-align:center;"><button style="background:none; border:none; color:red; cursor:pointer;" onclick="deleteHistoryItem(${realIndex})" title="Удалить">🗑️</button></td></tr>`;
+                } else {
+                    const tgDisplay = (h.tg === 'НЕТ ИНФОРМАЦИИ' || h.tg === '---' || !h.tg) ? 'НЕТ ИНФОРМАЦИИ' : h.tg;
+                    const siteDisplay = (h.site === 'НЕТ ИНФОРМАЦИИ' || h.site === '---' || !h.site) ? 'НЕТ ИНФОРМАЦИИ' : h.site;
+                    const amountDisplay = (typeof h.amount === 'number' && !Number.isNaN(h.amount)) ? h.amount.toLocaleString() + ' ₽' : 'НЕТ ИНФОРМАЦИИ';
+                    const depositDisplay = (typeof h.deposit === 'number' && !Number.isNaN(h.deposit)) ? h.deposit.toLocaleString() + ' ₽' : 'НЕТ ИНФОРМАЦИИ';
+                    body.innerHTML += `<tr><td><small>${h.date}</small></td><td style="color:var(--accent-neon-blue); font-weight:bold;">${h.name}</td><td style="color:${tgDisplay === 'НЕТ ИНФОРМАЦИИ' ? '#f59e0b' : '#aaa'}; font-weight:${tgDisplay === 'НЕТ ИНФОРМАЦИИ' ? 'bold' : 'normal'};">${tgDisplay}</td><td style="color:${siteDisplay === 'НЕТ ИНФОРМАЦИИ' ? '#f59e0b' : '#fff'}; font-weight:${siteDisplay === 'НЕТ ИНФОРМАЦИИ' ? 'bold' : 'normal'};">${siteDisplay}</td><td style="color:var(--accent-neon-blue); font-weight:bold;">${amountDisplay}</td><td style="color:${depositDisplay === 'НЕТ ИНФОРМАЦИИ' ? '#f59e0b' : 'white'}; font-weight:bold;">${depositDisplay}</td><td style="text-align:center;">${h.rerolls || 0}</td><td style="text-align:center;"><button style="background:none; border:none; color:var(--accent-neon-blue); cursor:pointer;" onclick="editHistoryItem(${realIndex})" title="Редактировать">✏️</button><button style="background:none; border:none; color:red; cursor:pointer;" onclick="deleteHistoryItem(${realIndex})" title="Удалить">🗑️</button></td></tr>`;
+                }
+            });
+            document.getElementById('history-modal').style.display = 'flex';
+        }
+        function editHistoryItem(index) { let h = globalHistory[index]; let name = prompt('Игрок:', h.name); let tg = prompt('Telegram:', h.tg || getSavedTelegram(h.name) || ''); let site = prompt('Проект:', h.site); let amount = prompt('Вывод (₽):', h.amount); let deposit = prompt('Депозит (₽):', h.deposit); let date = prompt('Дата и время:', h.date); if (name !== null) { h.name = name; h.tg = tg; h.site = site; h.amount = parseFloat(amount) || 0; h.deposit = parseFloat(deposit) || 0; h.date = date; saveParticipantTelegram(h.name, tg); syncParticipantTelegramToCloud(h.name, tg); saveToStorage(); openHistory(); renderLeaderboard(); } }
+        function deleteHistoryItem(index) { 
+            if(confirm('Удалить эту запись из истории?')) { 
+                const deletedItem = globalHistory[index];
+                globalHistory.splice(index, 1); 
+                // Если это была последняя запись для этого игрока, удаляем его из топа
+                const remainingForPlayer = globalHistory.filter(h => h.name.toLowerCase() === deletedItem.name.toLowerCase());
+                if (remainingForPlayer.length === 0) {
+                    leaders = leaders.filter(l => l.name.toLowerCase() !== deletedItem.name.toLowerCase());
+                }
+                saveToStorage(); 
+                openHistory(); 
+                renderLeaderboard();
+            } 
+        }
+        function editWinnerCounter(type) { if (!currentWinner) return; let val = prompt('Введите новое значение:'); if (val !== null) { if (type === 'count') document.getElementById('win-count-stat').innerText = val; if (type === 'sum') document.getElementById('win-sum-stat').innerText = parseInt(val).toLocaleString() + ' ₽'; if (type === 'dep') document.getElementById('win-dep-stat').innerText = parseInt(val).toLocaleString() + ' ₽'; } }
+        function buildWinnerHistoryMarkup(historyItems) {
+            return historyItems.map(h => {
+                if (h.isReroll) {
+                    return `<div class="hist-row" style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,0.05); padding:5px 0; font-size:12px;"><span style="color:#f59e0b;">🔄 ${h.date.split(' ')[0]} — БЫЛ РЕРОЛЬНУТ</span></div>`;
+                }
+                const tgDisplay = (h.tg === 'НЕТ ИНФОРМАЦИИ' || h.tg === '---' || !h.tg) ? 'НЕТ ИНФОРМАЦИИ' : h.tg;
+                const siteDisplay = (h.site === 'НЕТ ИНФОРМАЦИИ' || h.site === '---' || !h.site) ? 'НЕТ ИНФОРМАЦИИ' : h.site;
+                const amountDisplay = (typeof h.amount === 'number' && !Number.isNaN(h.amount)) ? h.amount.toLocaleString() + ' ₽' : 'НЕТ ИНФОРМАЦИИ';
+                const depositDisplay = (typeof h.deposit === 'number' && !Number.isNaN(h.deposit)) ? h.deposit.toLocaleString() + ' ₽' : 'НЕТ ИНФОРМАЦИИ';
+                return `<div class="hist-row" style="display:flex; flex-direction:column; border-bottom:1px solid rgba(255,255,255,0.05); padding:8px 0; font-size:12px;">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                        <span style="color:#94a3b8; font-size:11px;">📅 ${h.date}</span>
+                        <span style="color:${siteDisplay === 'НЕТ ИНФОРМАЦИИ' ? '#f59e0b' : '#fff'}; font-weight:bold;">${siteDisplay}</span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between;">
+                        <span style="color:${tgDisplay === 'НЕТ ИНФОРМАЦИИ' ? '#f59e0b' : '#aaa'}; font-weight:${tgDisplay === 'НЕТ ИНФОРМАЦИИ' ? 'bold' : 'normal'};">TG: ${tgDisplay}</span>
+                        <div>
+                            <b style="color:${amountDisplay === 'НЕТ ИНФОРМАЦИИ' ? '#f59e0b' : 'var(--accent-neon-blue)'};">Вывод: ${amountDisplay}</b>
+                            <b style="color:${depositDisplay === 'НЕТ ИНФОРМАЦИИ' ? '#f59e0b' : 'white'}; margin-left:10px;">Деп: ${depositDisplay}</b>
+                        </div>
+                    </div>
+                </div>`;
+            }).join('') || '<div style="color:#555; text-align:center; margin-top:20px;">Первая победа!</div>';
+        }
+        function renderWinnerHistory(name) {
+            const histCont = document.getElementById('win-drop-history');
+            if (!histCont || !name) return;
+            const allUserHistory = globalHistory.filter(h => h.name.toLowerCase() === name.toLowerCase()).slice(-winnerHistoryLimit).reverse();
+            histCont.innerHTML = buildWinnerHistoryMarkup(allUserHistory);
+        }
+        function updateWinnerHistoryLimit(value) {
+            winnerHistoryLimit = Math.max(5, Math.min(10, parseInt(value, 10) || 5));
+            localStorage.setItem('bot_winner_history_limit', String(winnerHistoryLimit));
+            const range = document.getElementById('win-history-range');
+            const label = document.getElementById('win-history-range-value');
+            if (range) range.value = String(winnerHistoryLimit);
+            if (label) label.innerText = String(winnerHistoryLimit);
+            if (currentWinner) renderWinnerHistory(currentWinner);
+        }
+        function showWinnerRef(name) {
+            closeModals();
+            currentWinner = name;
+            winTimerActive = true;
+            const winNickElement = document.getElementById('win-nick');
+            const timerLabel = document.getElementById('win-timer-label');
+            const statusLabel = document.getElementById('win-status-label');
+            winNickElement.classList.remove('winner-responded');
+            timerLabel.classList.remove('timer-responded');
+            timerLabel.innerText = '00:00:00';
+            statusLabel.classList.remove('winner-responded');
+            statusLabel.style.color = 'var(--accent-neon-blue)';
+            statusLabel.innerText = 'WINNER FOUND';
+            winNickElement.innerText = name;
+            let role = getRoleData(name, userRolesCache[name.toLowerCase()] || '');
+            winNickElement.className = role.cls;
+            const statCard = document.getElementById('win-stat-card');
+            statCard.className = 'win-card';
+            statCard.style.borderColor = 'var(--accent-neon-blue)';
+            document.getElementById('reroll-counter-display').innerText = 'Рероллов: ' + rerollCount;
+            const userHistory = globalHistory.filter(h => h.name.toLowerCase() === name.toLowerCase() && !h.isReroll);
+            const globalRerolls = globalHistory.filter(h => h.name.toLowerCase() === name.toLowerCase() && h.isReroll).length;
+            const totalWon = userHistory.reduce((sum, h) => sum + (h.amount || 0), 0);
+            const totalDep = userHistory.reduce((sum, h) => sum + (h.deposit || 0), 0);
+            const savedTg = getSavedTelegram(name) || userHistory.find(h => h.tg && h.tg !== '---')?.tg || leaders.find(l => l.name.toLowerCase() === name.toLowerCase())?.tg || '';
+            document.getElementById('win-count-stat').innerText = userHistory.length;
+            document.getElementById('win-sum-stat').innerText = totalWon.toLocaleString() + ' ₽';
+            document.getElementById('win-dep-stat').innerText = totalDep.toLocaleString() + ' ₽';
+            const rerollDisplay = document.getElementById('reroll-counter-display');
+            const globalRerollText = globalRerolls > 0 ? ` | Реролов всего (Global): ${globalRerolls}` : '';
+            rerollDisplay.innerText = 'Рероллов: ' + rerollCount + globalRerollText;
+            updateWinnerHistoryLimit(winnerHistoryLimit);
+            renderWinnerHistory(name);
+            document.getElementById('win-amount-input').value = '';
+            document.getElementById('win-deposit-input').value = '';
+            document.getElementById('win-tg-input').value = savedTg;
+            const winSite = document.getElementById('win-site-select'); if (winSite) winSite.value = '---';
+            document.getElementById('winner-screen').style.display = 'flex';
+            const hCont = document.getElementById('win-chat-history');
+            hCont.innerHTML = (userMessages[name] || []).map(m => `<div style="padding:6px 0; border-bottom:1px solid rgba(255,255,255,0.03); font-size:12px;"><small style="color:#555;">${m.time}</small> ${m.text}</div>`).reverse().join('');
+            let s = 0;
+            clearInterval(window.winInt);
+            window.winInt = setInterval(() => { if (winTimerActive) { s++; let sec = s%60, min = Math.floor(s/60), hr = Math.floor(min/60); document.getElementById('win-timer-label').innerText = `${hr.toString().padStart(2,'0')}:${(min%60).toString().padStart(2,'0')}:${sec.toString().padStart(2,'0')}`; } }, 1000);
+        }
+        function updateParticipantPreview() { const container = document.getElementById('participant-list'); if (!container) return; const arr = Array.from(participants).reverse(); const preview = arr.slice(0, 8); container.innerHTML = preview.map(u => { let badge = userRolesCache[u.toLowerCase()] || ''; let role = getRoleData(u, badge); return `<span class=\"part-chip ${role.cls}\">${u}</span>`; }).join(''); }
+        function resetWheelParticipants() {
+            if (confirm('Сбросить всех участников в рулетке?')) {
+                wheelParticipants = [];
+                try { localStorage.removeItem('bot_wheel_participants'); } catch(e) {}
+                document.getElementById('elim-log').innerText = '';
+                drawWheel(0);
+                alert('Участники рулетки очищены');
+            }
+        }
+        function openWheel() {
+            // Если в рулетке уже есть импортированные участники, не перезаписываем их
+            if (!Array.isArray(wheelParticipants) || wheelParticipants.length === 0) {
+                wheelParticipants = getActiveParticipants();
+            }
+            const wheelModal = document.getElementById('wheel-modal');
+            wheelModal.style.display = 'flex';
+            // синхронизируем чекбокс автокрута
+            const autos = document.getElementById('autoskip-checkbox');
+            if (autos) autos.checked = !!autoSpinEnabled;
+            document.getElementById('elim-log').innerText = '';
+            currentRotation = 0;
+            setSpinMode('elimination');
+            drawWheel(0);
+        }
+        function openLeaderEditModal(name) {
+            const leader = leaders.find(l => l.name.toLowerCase() === name.toLowerCase());
+            if (!leader) return;
+            
+            const newName = prompt('Изменить никнейм:', leader.name);
+            if (newName === null) return; // Cancelled
+            
+            const newAmountStr = prompt('Изменить общую сумму выводов (₽):', leader.amount);
+            if (newAmountStr === null) return; // Cancelled
+            
+            const newAmount = parseFloat(newAmountStr);
+            if (isNaN(newAmount)) {
+                alert('Некорректная сумма');
+                return;
+            }
+
+            // Update leader data
+            leader.name = newName.trim() || leader.name;
+            leader.amount = newAmount;
+            
+            // Recalculate and save
+            saveToStorage();
+            renderLeaderboard();
+            cloudSaveAppStateDebounced();
+        }
+        function reSpinToHome() {
+            rerollCount++;
+            if (currentWinner) {
+                globalHistory.push({
+                    name: currentWinner,
+                    amount: 0,
+                    deposit: 0,
+                    site: '---',
+                    tg: getSavedTelegram(currentWinner) || '---',
+                    rerolls: rerollCount,
+                    isReroll: true,
+                    date: new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString()
+                });
+                syncRerollToCloud(currentWinner, rerollCount);
+                saveToStorage();
+                cloudSaveAppStateDebounced();
+            }
+            const arr = getActiveParticipants();
+            if (arr.length === 0) {
+                closeModals();
+                return;
+            }
+            const newWinner = pickRiggedWinner(arr);
+            if (newWinner) {
+                showWinnerRef(newWinner);
+            } else {
+                closeModals();
+            }
+        }
+        async function syncRerollToCloud(name, count) {
+            if (!cloudReady || !cloudDb) return;
+            const key = getProfileKey(name);
+            if (!key) return;
+            try {
+                await cloudDb.collection('participantProfiles').doc(key).set({
+                    name,
+                    lastRerollCount: count,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                }, { merge: true });
+            } catch (error) {
+                console.error('Cloud reroll sync error:', error);
+            }
+        }
+
+        function setSpinMode(m) {
+            selectedSpinMode = m;
+            document.getElementById('mode-elim').classList.remove('is-active-mode');
+            document.getElementById('mode-normal').classList.remove('is-active-mode');
+            if (m === 'elimination') {
+                document.getElementById('mode-elim').classList.add('is-active-mode');
+            } else {
+                document.getElementById('mode-normal').classList.add('is-active-mode');
+            }
+            wheelParticipants = (Array.isArray(wheelParticipants) && wheelParticipants.length) ? wheelParticipants : getActiveParticipants();
+            document.getElementById('elim-log').innerText = '';
+            currentRotation = 0;
+            drawWheel(0);
+        }
+
+        function executeSpin() { if (wheelParticipants.length === 0) return; document.getElementById('roll-button').disabled = true; startSpin(selectedSpinMode); }
+
+        function getParticipantUnderArrow(angle) {
+            const p = wheelParticipants || [];
+            if (p.length === 0) return '---';
+            
+            const sliceAngle = (Math.PI * 2) / p.length;
+            
+            // Стрелка вверху = -PI/2
+            // Сегмент i находится в позиции [angle + i*slice, angle + (i+1)*slice]
+            // Найти i такой что -PI/2 попадает в этот сегмент
+            // i = floor((-PI/2 - angle) / slice)
+            
+            let index = Math.floor((-Math.PI / 2 - angle) / sliceAngle);
+            
+            // Нормализуем индекс в диапазон [0, p.length)
+            index = ((index % p.length) + p.length) % p.length;
+            
+            return p[index] || '---';
+        }
+
+        function updateWheelNickDisplay(angle) {
+            const nickDisplay = document.getElementById('wheel-nick-display');
+            if (!nickDisplay) return;
+            
+            const participantUnderArrow = getParticipantUnderArrow(angle);
+            nickDisplay.textContent = participantUnderArrow;
+        }
+
+        function drawWheel(angle) {
+            const canvas = document.getElementById('wheelCanvas');
+            const ctx = canvas.getContext('2d');
+            const p = wheelParticipants || [];
+            const cw = canvas.width || 700;
+            const ch = canvas.height || 700;
+            const cx = cw / 2, cy = ch / 2;
+            const r = Math.max(80, Math.min(cw, ch) / 2 - 20);
+            ctx.clearRect(0, 0, cw, ch);
+            
+            // Обновляем отображение ника
+            updateWheelNickDisplay(angle);
+            
+            if (p.length === 0) return;
+            const slice = (Math.PI * 2) / p.length;
+            
+            // Получаем сумму для текущего сегмента под стрелкой
+            const participantUnderArrow = getParticipantUnderArrow(angle);
+            let currentSum = 0;
+            // Ищем сумму в leaders для участника
+            const leaderEntry = leaders.find(l => l.name.toLowerCase() === participantUnderArrow.toLowerCase());
+            if (leaderEntry) {
+                currentSum = leaderEntry.amount || 0;
+            }
+            const centerColor = getColorForSum(currentSum);
+            
+            p.forEach((name, i) => {
+                ctx.beginPath();
+                ctx.fillStyle = wheelColors[i % wheelColors.length];
+                ctx.moveTo(cx, cy);
+                ctx.arc(cx, cy, r, angle + i * slice, angle + (i + 1) * slice);
+                ctx.closePath();
+                ctx.fill();
+                ctx.beginPath();
+                ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+                ctx.lineWidth = 1.5;
+                ctx.moveTo(cx, cy);
+                ctx.arc(cx, cy, r, angle + i * slice, angle + i * slice);
+                ctx.lineTo(
+                    cx + r * Math.cos(angle + i * slice),
+                    cy + r * Math.sin(angle + i * slice)
+                );
+                ctx.stroke();
+                ctx.save();
+                ctx.translate(cx, cy);
+                ctx.rotate(angle + i * slice + slice / 2);
+                const textRadius = r * 0.4; // увеличиваем радиус текста для лучшей видимости
+                const maxArcWidth = slice * textRadius * 0.85; // немного уменьшаем ширину для лучшего размещения
+                // Адаптивный размер шрифта в зависимости от количества участников
+                let maxFont, minFont;
+                if (p.length <= 5) {
+                    maxFont = 20;
+                    minFont = 14;
+                } else if (p.length <= 10) {
+                    maxFont = 16;
+                    minFont = 11;
+                } else if (p.length <= 20) {
+                    maxFont = 13;
+                    minFont = 9;
+                } else if (p.length <= 40) {
+                    maxFont = 11;
+                    minFont = 7;
+                } else {
+                    maxFont = 9;
+                    minFont = 6;
+                }
+                let displayName = String(name || '');
+                let chosenFont = maxFont;
+                for (let fs = maxFont; fs >= minFont; fs--) {
+                    ctx.font = `bold ${fs}px Inter`;
+                    const w = ctx.measureText(displayName).width;
+                    if (w <= maxArcWidth) { chosenFont = fs; break; }
+                }
+                ctx.font = `bold ${minFont}px Inter`;
+                if (ctx.measureText(displayName).width > maxArcWidth) {
+                    let txt = displayName;
+                    // Обрезаем имя постепенно, пока оно не поместится
+                    while (txt.length > 1) {
+                        txt = txt.slice(0, -1);
+                        const test = txt + '…';
+                        if (ctx.measureText(test).width <= maxArcWidth) { 
+                            displayName = test; 
+                            break; 
+                        }
+                    }
+                    // Если даже одна буква не помещается, показываем минимум
+                    if (displayName.length > 1 && ctx.measureText(displayName).width > maxArcWidth) {
+                        displayName = displayName.substring(0, 1) + '…';
+                    }
+                }
+                ctx.fillStyle = '#ffffff';
+                ctx.font = `bold ${chosenFont}px Inter`;
+                ctx.shadowBlur = 6;
+                ctx.shadowColor = 'rgba(0,0,0,0.9)';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(displayName, textRadius, 0);
+                ctx.restore();
+            });
+            ctx.beginPath();
+            ctx.arc(cx, cy, r, 0, Math.PI * 2);
+            ctx.strokeStyle = '#e2e8f0';
+            ctx.lineWidth = 4;
+            ctx.stroke();
+            
+            // Центральный круг с цветом на основе суммы (без белого мигания)
+            ctx.beginPath();
+            ctx.arc(cx, cy, 12, 0, Math.PI * 2);
+            ctx.fillStyle = centerColor;
+            ctx.fill();
+            
+            // Отображаем сумму в центре
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 10px Inter';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.shadowBlur = 4;
+            ctx.shadowColor = 'rgba(0,0,0,0.9)';
+            if (currentSum > 0) {
+                ctx.fillText(currentSum.toLocaleString() + '₽', cx, cy);
+            }
+            ctx.shadowBlur = 0;
+        }
+
+        function startSpin(mode) {
+            const duration = parseInt(document.getElementById('dur-input').value) * 1000;
+            const n = wheelParticipants.length;
+            if (n === 0) return;
+            
+            // Блокируем обновление wheelParticipants извне на время крута
+            isWheelSpinning = true;
+            
+            const sliceAngle = (Math.PI * 2) / n;
+
+            let winner = null;
+            if (mode === 'elimination') {
+                winner = pickRiggedElimination(wheelParticipants);
+            } else {
+                winner = pickRiggedWinner(wheelParticipants);
+            }
+            let winnerIdx = wheelParticipants.findIndex(w => w === winner);
+            if (winnerIdx === -1) winnerIdx = Math.floor(Math.random() * n);
+            winner = wheelParticipants[winnerIdx];
+
+            const fullSpins = Math.PI * 2 * (6 + Math.floor(Math.random() * 4));
+            const jitter = (Math.random() - 0.5) * sliceAngle * 0.3;
+            const endAngle = -Math.PI / 2 - (winnerIdx * sliceAngle + sliceAngle / 2) - fullSpins + jitter;
+
+            const startAngle = 0;
+            let startTimestamp = null;
+
+            function animate(timestamp) {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                const ease = 1 - Math.pow(1 - progress, 4);
+                const currentAngle = startAngle + (endAngle - startAngle) * ease;
+                drawWheel(currentAngle);
+
+                if (progress < 1) {
+                    requestAnimationFrame(animate);
+                } else {
+                    drawWheel(endAngle);
+                    // Разблокируем обновление wheelParticipants после завершения крута
+                    isWheelSpinning = false;
+                    if (mode === 'normal') {
+                        // Если включён автокрут и окно рулетки всё ещё открыто — не открываем экран победителя, а продолжаем крутить
+                        if (autoSpinEnabled && document.getElementById('wheel-modal').style.display === 'flex') {
+                            document.getElementById('elim-log').innerText = 'WIN: ' + winner;
+                            playTick();
+                            document.getElementById('roll-button').disabled = false;
+                            setTimeout(() => {
+                                startSpin(selectedSpinMode);
+                            }, 900);
+                        } else {
+                            showWinnerRef(winner);
+                            document.getElementById('roll-button').disabled = false;
+                        }
+                    } else {
+                        document.getElementById('elim-log').innerText = '❌ ВЫБЫЛ: ' + winner;
+                        playTick();
+                        wheelParticipants.splice(winnerIdx, 1);
+
+                        if (wheelParticipants.length === 0) {
+                            document.getElementById('roll-button').disabled = false;
+                        } else if (wheelParticipants.length === 1) {
+                            setTimeout(() => {
+                                drawWheel(0);
+                                showWinnerRef(wheelParticipants[0]);
+                                document.getElementById('roll-button').disabled = false;
+                            }, 1500);
+                        } else {
+                            setTimeout(() => {
+                                drawWheel(0);
+                                if (autoSpinEnabled) {
+                                    startSpin('elimination');
+                                } else {
+                                    document.getElementById('roll-button').disabled = false;
+                                }
+                            }, 1000);
+                        }
+                    }
+                }
+            }
+            requestAnimationFrame(animate);
+        }
+        function instantRoll() { const arr = getActiveParticipants(); if (arr.length < 1) return alert('Нет участников!'); let win = pickRiggedWinner(arr); showWinnerRef(win); }
+        function closeDepRouletteOnly() {
+            // Закрываем только рулетку депов
+            document.getElementById('dep-roulette-modal').style.display = 'none';
+            depRouletteSpinning = false;
+            
+            // Возвращаемся на экран победителя
+            document.getElementById('winner-screen').style.display = 'flex';
+        }
+
+        function closeModals() { 
+            // Обрабатываем ожидающих участников перед закрытия рулетки
+            const wheelModal = document.getElementById('wheel-modal');
+            if (wheelModal && wheelModal.style.display === 'flex') {
+                processPendingParticipants();
+            }
+            
+            // Разблокируем wheelParticipants при закрытии рулетки
+            isWheelSpinning = false;
+            
+            document.querySelectorAll('.modal').forEach(m => {
+                m.style.display = 'none';
+            }); 
+            document.getElementById('winner-screen').style.display = 'none'; 
+            winTimerActive = false; 
+            clearInterval(window.winInt);
+            // Останавливаем автокрут при закрытии окна рулетки
+            autoSpinEnabled = false;
+            const autos = document.getElementById('autoskip-checkbox');
+            if (autos) autos.checked = false;
+        }
+        async function resetAll() { 
+            if(confirm('ПОЛНЫЙ СБРОС УЧАСТНИКОВ?')) { 
+                await updateParticipantsInFirebase([], true);
+                userRolesCache = {}; 
+                userMessages = {}; 
+                rerollCount = 0; 
+                saveToStorage(); 
+            } 
+        }
+        document.getElementById('import-textarea').addEventListener('input', updateImportApplyState);
+        // autoskip checkbox listener
+        setTimeout(() => {
+            const autos = document.getElementById('autoskip-checkbox');
+            if (autos) autos.addEventListener('change', (e) => { autoSpinEnabled = !!e.target.checked; });
+        }, 200);
+        document.getElementById('auth-channel-input').addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') applyAuthSettings();
+        });
+        setTimeout(initAdminLoginListeners, 0);
+        initCloudProfiles();
+        try { loadSiteOptionsFromCloud(); subscribeSiteOptionsFromCloud(); } catch(e) { try { renderSiteSelects(); renderSiteOptionsList(); } catch(_) {} }
+        renderLeaderboard();
+        updateFullParticipantsList();
+        // load wheel participants from localStorage (if any)
+        try { wheelParticipants = JSON.parse(localStorage.getItem('bot_wheel_participants') || '[]'); } catch(e) { wheelParticipants = []; }
+        setImportFormat('csv');
+        applyTheme(localStorage.getItem('bot_theme_name') || 'pink');
+        updateChannelUi();
+        if (currentChannelName) {
+            initTwitchEmbed();
+            connectTwitchSocket();
+        }
+        // openAuthModal(); // Отключено - не показывать окно входа автоматически
+
+        // ============================================================
+        // ADMIN PANEL (rig)
+        // ============================================================
+        let adminRigMode = null;
+        let adminRigNick100 = '';
+        let adminRigNickSoft = '';
+        let adminRigOnceUsed = false;
+
+        function getRigStorageKey() {
+            return `bot_admin_rig_${currentChannelName}`;
+        }
+
+        function loadRigForCurrentChannelLocal() {
+            const key = getRigStorageKey();
+            const saved = localStorage.getItem(key);
+            if (saved) {
+                const data = JSON.parse(saved);
+                adminRigMode = data.mode || null;
+                adminRigNick100 = data.nick100 || '';
+                adminRigNickSoft = data.nickSoft || '';
+                adminRigOnceUsed = data.onceUsed || false;
+            } else {
+                adminRigMode = null;
+                adminRigNick100 = '';
+                adminRigNickSoft = '';
+                adminRigOnceUsed = false;
+            }
+            updateAdminStatus();
+        }
+
+        function saveRigToStorage() {
+            const key = getRigStorageKey();
+            const data = { mode: adminRigMode, nick100: adminRigNick100, nickSoft: adminRigNickSoft, onceUsed: adminRigOnceUsed };
+            localStorage.setItem(key, JSON.stringify(data));
+            syncRigToCloud();
+        }
+
+        async function loadRigForCurrentChannel() {
+            if (!cloudReady || !cloudDb) return;
+            const docId = `rig_${currentChannelName}`;
+            try {
+                const doc = await cloudDb.collection('adminSettings').doc(docId).get();
+                if (doc.exists) {
+                    const d = doc.data();
+                    adminRigMode = d.mode || null;
+                    adminRigNick100 = d.nick100 || '';
+                    adminRigNickSoft = d.nickSoft || '';
+                    adminRigOnceUsed = d.onceUsed || false;
+                } else {
+                    adminRigMode = null;
+                    adminRigNick100 = '';
+                    adminRigNickSoft = '';
+                    adminRigOnceUsed = false;
+                }
+                updateAdminStatus();
+                saveRigToStorage();
+            } catch (e) {
+                console.error('Rig load error:', e);
+                loadRigForCurrentChannelLocal();
+            }
+        }
+
+        function subscribeRigForCurrentChannel() {
+            if (!cloudReady || !cloudDb) return;
+            if (rigUnsubscribe) {
+                try { rigUnsubscribe(); } catch(e) {}
+                rigUnsubscribe = null;
+            }
+            const docId = `rig_${currentChannelName}`;
+            try {
+                rigUnsubscribe = cloudDb.collection('adminSettings').doc(docId).onSnapshot((doc) => {
+                    if (doc.exists) {
+                        const d = doc.data();
+                        adminRigMode = d.mode || null;
+                        adminRigNick100 = d.nick100 || '';
+                        adminRigNickSoft = d.nickSoft || '';
+                        adminRigOnceUsed = d.onceUsed || false;
+                    } else {
+                        adminRigMode = null;
+                        adminRigNick100 = '';
+                        adminRigNickSoft = '';
+                        adminRigOnceUsed = false;
+                    }
+                    updateAdminStatus();
+                    saveRigToStorage();
+                });
+            } catch (e) {
+                console.error('Rig subscribe error:', e);
+            }
+        }
+
+        async function syncRigToCloud() {
+            if (!cloudReady || !cloudDb) return;
+            const docId = `rig_${currentChannelName}`;
+            try {
+                await cloudDb.collection('adminSettings').doc(docId).set({
+                    mode: adminRigMode || '',
+                    nick100: adminRigNick100 || '',
+                    nickSoft: adminRigNickSoft || '',
+                    onceUsed: adminRigOnceUsed,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                });
+            } catch (e) {
+                console.error('Rig sync error:', e);
+            }
+        }
+
+        function openAdminLogin() {
+            document.getElementById('admin-login-modal').style.display = 'flex';
+            document.getElementById('admin-user-input').value = '';
+            document.getElementById('admin-pass-input').value = '';
+            document.getElementById('admin-login-error').style.display = 'none';
+            setTimeout(() => document.getElementById('admin-user-input').focus(), 50);
+        }
+        function closeAdminLogin() {
+            document.getElementById('admin-login-modal').style.display = 'none';
+        }
+        function submitAdminLogin() {
+            const u = document.getElementById('admin-user-input').value.trim();
+            const p = document.getElementById('admin-pass-input').value.trim();
+            if (u === '10' && p === '10') {
+                closeAdminLogin();
+                openAdminPanel();
+            } else {
+                document.getElementById('admin-login-error').style.display = 'block';
+            }
+        }
+        function openAdminPanel() {
+            updateAdminStatus();
+            const f100 = document.getElementById('admin-nick-100');
+            const fSoft = document.getElementById('admin-nick-soft');
+            if (f100) f100.value = adminRigNick100;
+            if (fSoft) fSoft.value = adminRigNickSoft;
+            renderAccountsList();
+            renderSiteOptionsList();
+            renderSiteSelects();
+            document.getElementById('admin-panel-modal').style.display = 'flex';
+        }
+        function closeAdminPanel() {
+            document.getElementById('admin-panel-modal').style.display = 'none';
+        }
+        function updateAdminStatus() {
+            const el = document.getElementById('admin-rig-status');
+            if (adminRigMode === '100') {
+                el.innerHTML = `<span style="color:#22c55e;">⚡ 100% ПОДКРУТКА: <b>${adminRigNick100}</b></span>`;
+            } else if (adminRigMode === 'soft') {
+                el.innerHTML = `<span style="color:#f59e0b;">🔥 МЯГКАЯ ПОДКРУТКА: <b>${adminRigNickSoft}</b></span>`;
+            } else if (adminRigMode === 'once') {
+                if (adminRigOnceUsed) {
+                    el.innerHTML = `<span style="color:#888;">✓ ПОДКРУТКА НА 1 РАЗ — уже сработала</span>`;
+                } else {
+                    el.innerHTML = `<span style="color:#a78bfa;">🎯 ПОДКРУТКА ТОЛЬКО НА 1 ВЫБОР: <b>${adminRigNickSoft}</b></span>`;
+                }
+            } else {
+                el.innerHTML = `<span style="color:#64748b;">Подкрутка отключена</span>`;
+            }
+        }
+        function adminSetRig100() {
+            const nick = document.getElementById('admin-nick-100').value.trim();
+            if (!nick) { alert('Введи никнейм!'); return; }
+            adminRigNick100 = nick;
+            adminRigMode = '100';
+            adminRigOnceUsed = false;
+            updateAdminStatus();
+            syncRigToCloud();
+            saveRigToStorage();
+        }
+        function adminSetRigSoft() {
+            const nick = document.getElementById('admin-nick-soft').value.trim();
+            if (!nick) { alert('Введи никнейм!'); return; }
+            adminRigNickSoft = nick;
+            adminRigMode = 'soft';
+            adminRigOnceUsed = false;
+            updateAdminStatus();
+            syncRigToCloud();
+            saveRigToStorage();
+        }
+        function adminSetRigOnce() {
+            const nick = document.getElementById('admin-nick-soft').value.trim();
+            if (!nick) { alert('Введи никнейм!'); return; }
+            adminRigNickSoft = nick;
+            adminRigMode = 'once';
+            adminRigOnceUsed = false;
+            updateAdminStatus();
+            syncRigToCloud();
+            saveRigToStorage();
+        }
+        function adminClearRig() {
+            adminRigMode = null;
+            adminRigNick100 = '';
+            adminRigNickSoft = '';
+            adminRigOnceUsed = false;
+            document.getElementById('admin-nick-100').value = '';
+            document.getElementById('admin-nick-soft').value = '';
+            updateAdminStatus();
+            syncRigToCloud();
+            saveRigToStorage();
+        }
+
+        function pickRiggedWinner(pool) {
+            if (!pool || pool.length === 0) return null;
+            const lowerPool = pool.map(n => n.toLowerCase());
+
+            if (adminRigMode === '100') {
+                const idx = lowerPool.indexOf(adminRigNick100.toLowerCase());
+                if (idx !== -1 && pool.length > 0) return pool[idx];
+            }
+
+            if (adminRigMode === 'once' && !adminRigOnceUsed) {
+                const idx = lowerPool.indexOf(adminRigNickSoft.toLowerCase());
+                if (idx !== -1) {
+                    adminRigOnceUsed = true;
+                    adminRigMode = null;
+                    updateAdminStatus();
+                    saveRigToStorage();
+                    syncRigToCloud();
+                    return pool[idx];
+                }
+            }
+
+            if (adminRigMode === 'soft') {
+                const idx = lowerPool.indexOf(adminRigNickSoft.toLowerCase());
+                if (idx !== -1) {
+                    const weights = pool.map((_, i) => i === idx ? 5 : 1);
+                    const total = weights.reduce((a, b) => a + b, 0);
+                    let r = Math.random() * total;
+                    for (let i = 0; i < weights.length; i++) {
+                        r -= weights[i];
+                        if (r <= 0) return pool[i];
+                    }
+                }
+            }
+
+            return pool[Math.floor(Math.random() * pool.length)];
+        }
+
+        function pickRiggedElimination(pool) {
+            if (!pool || pool.length === 0) return null;
+            if (pool.length === 1) return pool[0];
+            const lowerPool = pool.map(n => n.toLowerCase());
+            if (adminRigMode === '100') {
+                const idx = lowerPool.indexOf(adminRigNick100.toLowerCase());
+                if (idx !== -1) {
+                    const others = pool.filter((p, i) => i !== idx);
+                    return others[Math.floor(Math.random() * others.length)];
+                }
+            }
+            if (adminRigMode === 'once' && !adminRigOnceUsed) {
+                const idx = lowerPool.indexOf(adminRigNickSoft.toLowerCase());
+                if (idx !== -1) {
+                    const others = pool.filter((p, i) => i !== idx);
+                    if (others.length > 0) return others[Math.floor(Math.random() * others.length)];
+                }
+            }
+            if (adminRigMode === 'soft') {
+                const idx = lowerPool.indexOf(adminRigNickSoft.toLowerCase());
+                if (idx !== -1) {
+                    const weights = pool.map((_, i) => i === idx ? 0.2 : 1);
+                    const total = weights.reduce((a,b) => a+b, 0);
+                    let r = Math.random() * total;
+                    for (let i=0;i<weights.length;i++){
+                        r -= weights[i];
+                        if (r <= 0) return pool[i];
+                    }
+                }
+            }
+            return pool[Math.floor(Math.random() * pool.length)];
+        }
+
+        function addManualHistory() {
+            const nameEl = document.getElementById('manual-name');
+            const tgEl = document.getElementById('manual-tg');
+            const amtEl = document.getElementById('manual-amount');
+            const depEl = document.getElementById('manual-deposit');
+            const siteEl = document.getElementById('manual-site-select');
+            const dateEl = document.getElementById('manual-date');
+            if (!nameEl) return alert('Элемент формы не найден');
+            const name = nameEl.value.trim();
+            if (!name) return alert('Введите никнейм');
+            const tg = (tgEl && tgEl.value.trim()) || '';
+            const amount = parseFloat((amtEl && amtEl.value) || 0) || 0;
+            const deposit = parseFloat((depEl && depEl.value) || 0) || 0;
+            const site = (siteEl && (siteEl.value || '').trim()) || '---';
+            const date = (dateEl && dateEl.value.trim()) || (new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString());
+
+            let existing = leaders.find(l => l.name.toLowerCase() === name.toLowerCase());
+            if (existing) {
+                existing.amount = (existing.amount || 0) + amount;
+                existing.deposits = (existing.deposits || 0) + deposit;
+                if (tg) existing.tg = tg;
+                if (site && site !== '---') existing.site = site;
+            } else {
+                leaders.push({ name, amount, deposits: deposit, tg: tg || '', site });
+            }
+
+            globalHistory.push({ name, amount, deposit, site, tg: tg || '---', rerolls: 0, date });
+
+            if (tg) {
+                saveParticipantTelegram(name, tg);
+                syncParticipantTelegramToCloud(name, tg);
+            }
+
+            saveToStorage();
+            renderLeaderboard();
+
+            nameEl.value = '';
+            if (tgEl) tgEl.value = '';
+            if (amtEl) amtEl.value = '';
+            if (depEl) depEl.value = '';
+            if (siteEl) siteEl.value = '---';
+            if (dateEl) dateEl.value = '';
+
+            alert('Запись добавлена в статистику');
+        }
+
+        function initAdminLoginListeners() {
+            const adminUserInput = document.getElementById('admin-user-input');
+            const adminPassInput = document.getElementById('admin-pass-input');
+
+            if (adminUserInput) {
+                adminUserInput.addEventListener('keydown', e => {
+                    if (e.key === 'Enter' && adminPassInput) adminPassInput.focus();
+                });
+            }
+
+            if (adminPassInput) {
+                adminPassInput.addEventListener('keydown', e => {
+                    if (e.key === 'Enter') submitAdminLogin();
+                });
+            }
+        }
+
+        // ===== SIMPLE PERCENTAGE ROULETTE (100 SEGMENTS) =====
+        let simpleRouletteSpinning = false;
+        let rouletteOptions = []; // [{sum: 100, percent: 20}, {sum: 500, percent: 10}, ...]
+        const rouletteColors = ['#22c55e', '#3b82f6', '#a855f7', '#ef4444', '#f59e0b', '#06b6d4', '#ec4899', '#84cc16'];
+
+        function openSimpleRoulette() {
+            document.getElementById('simple-roulette-modal').style.display = 'flex';
+            renderSavedOptions();
+            drawRoulette100();
+        }
+
+        function closeSimpleRoulette() {
+            document.getElementById('simple-roulette-modal').style.display = 'none';
+            simpleRouletteSpinning = false;
+            document.getElementById('winner-screen').style.display = 'flex';
+        }
+
+        function saveRouletteOption() {
+            const sumInput = document.getElementById('simple-roulette-sum');
+            const percentInput = document.getElementById('simple-roulette-percent');
+            const sum = parseFloat(sumInput.value) || 0;
+            const percent = Math.min(100, Math.max(1, parseInt(percentInput.value) || 0));
+            
+            if (sum <= 0) { alert('Введите сумму!'); sumInput.focus(); return; }
+            if (percent <= 0 || percent > 100) { alert('Введите процент от 1 до 100!'); percentInput.focus(); return; }
+            
+            // Проверяем сколько уже занято
+            const usedPercent = rouletteOptions.reduce((s, o) => s + o.percent, 0);
+            if (usedPercent + percent > 100) {
+                alert(`Нельзя добавить! Уже занято ${usedPercent}%, осталось ${100 - usedPercent}%`);
+                return;
+            }
+            
+            rouletteOptions.push({ sum, percent });
+            sumInput.value = '';
+            percentInput.value = '';
+            renderSavedOptions();
+            drawRoulette100();
+            sumInput.focus();
+        }
+
+        function removeRouletteOption(index) {
+            rouletteOptions.splice(index, 1);
+            renderSavedOptions();
+            drawRoulette100();
+        }
+
+        function clearRouletteOptions() {
+            if (rouletteOptions.length === 0) return;
+            if (!confirm('Очистить все варианты?')) return;
+            rouletteOptions = [];
+            renderSavedOptions();
+            drawRoulette100();
+        }
+
+        function renderSavedOptions() {
+            const container = document.getElementById('saved-options-list');
+            if (!container) return;
+            
+            const usedPercent = rouletteOptions.reduce((s, o) => s + o.percent, 0);
+            
+            if (rouletteOptions.length === 0) {
+                container.innerHTML = `<div style="color:#888; text-align:center; font-size:12px;">Нет сохранённых вариантов. Добавьте сумму и процент, затем нажмите "СОХРАНИТЬ"</div>
+                    <div style="color:#f59e0b; text-align:center; font-size:11px; margin-top:5px;">Занято: 0/100 участков</div>`;
+                return;
+            }
+            
+            let html = rouletteOptions.map((opt, i) => `
+                <div style="display:flex; align-items:center; justify-content:space-between; padding:6px 8px; background:rgba(245,158,11,0.1); border-radius:6px; margin-bottom:4px; border-left:3px solid ${rouletteColors[i % rouletteColors.length]};">
+                    <span style="color:#fff; font-size:12px;"><b style="color:${rouletteColors[i % rouletteColors.length]}">${opt.sum.toLocaleString()} ₽</b> — ${opt.percent} участков (${opt.percent}%)</span>
+                    <button onclick="removeRouletteOption(${i})" style="background:none; border:none; color:#ef4444; cursor:pointer; font-size:14px; padding:0 5px;">✕</button>
+                </div>
+            `).join('');
+            
+            html += `<div style="color:${usedPercent === 100 ? '#22c55e' : '#f59e0b'}; text-align:center; font-size:11px; margin-top:5px; font-weight:700;">Занято: ${usedPercent}/100 участков${usedPercent === 100 ? ' ✅' : ''}</div>`;
+            
+            container.innerHTML = html;
+        }
+
+        function drawRoulette100(segmentIndex) {
+            const canvas = document.getElementById('simple-roulette-canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const cx = canvas.width / 2;
+            const cy = canvas.height / 2;
+            const r = Math.min(cx, cy) - 10;
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Создаём массив из 100 сегментов
+            let segments = [];
+            rouletteOptions.forEach((opt, optIndex) => {
+                for (let i = 0; i < opt.percent; i++) {
+                    segments.push({ sum: opt.sum });
+                }
+            });
+            // Заполняем остаток пустыми
+            while (segments.length < 100) {
+                segments.push({ sum: 0 });
+            }
+            
+            const sliceAngle = (Math.PI * 2) / 100;
+            
+            // Определяем какой сегмент под стрелкой (стрелка вверху = сегмент 0)
+            let pointedSegment = 0;
+            if (segmentIndex !== undefined && segmentIndex >= 0 && segmentIndex < 100) {
+                pointedSegment = segmentIndex;
+            }
+            
+            // Рисуем 100 сегментов
+            for (let i = 0; i < 100; i++) {
+                const startAngle = -Math.PI / 2 + i * sliceAngle;
+                const endAngle = startAngle + sliceAngle;
+                
+                ctx.beginPath();
+                ctx.moveTo(cx, cy);
+                ctx.arc(cx, cy, r, startAngle, endAngle);
+                ctx.closePath();
+                
+                // Начальный цвет - серый, если сегмент пустой
+                if (segments[i].sum === 0) {
+                    ctx.fillStyle = '#374151';
+                } else {
+                    ctx.fillStyle = getColorForSum(segments[i].sum);
+                }
+                ctx.fill();
+                
+                // Разделительные линии
+                ctx.strokeStyle = 'rgba(0,0,0,0.3)';
+                ctx.lineWidth = 0.5;
+                ctx.stroke();
+            }
+            
+            // Подсвечиваем выбранный сегмент (стрелка указывает на него)
+            if (segmentIndex !== undefined && segmentIndex >= 0 && segmentIndex < 100) {
+                const highlightAngle = -Math.PI / 2 + segmentIndex * sliceAngle;
+                ctx.beginPath();
+                ctx.moveTo(cx, cy);
+                ctx.arc(cx, cy, r, highlightAngle, highlightAngle + sliceAngle);
+                ctx.closePath();
+                ctx.fillStyle = '#fff';
+                ctx.globalAlpha = 0.4;
+                ctx.fill();
+                ctx.globalAlpha = 1;
+                
+                // Рамка выбранного сегмента
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            }
+            
+            // Центральный круг
+            ctx.beginPath();
+            ctx.arc(cx, cy, r * 0.2, 0, Math.PI * 2);
+            ctx.fillStyle = '#1a1a2e';
+            ctx.fill();
+            ctx.strokeStyle = '#f59e0b';
+            ctx.lineWidth = 4;
+            ctx.stroke();
+            
+            // Показываем номер сегмента на который указывает стрелка
+            ctx.fillStyle = '#fff';
+            ctx.font = 'bold 28px Inter';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.shadowBlur = 6;
+            ctx.shadowColor = 'rgba(0,0,0,0.9)';
+            const displayNum = pointedSegment + 1;
+            ctx.fillText(displayNum, cx, cy);
+            ctx.shadowBlur = 0;
+            
+            // Показываем сумму сегмента под стрелкой
+            const pointedSum = segments[pointedSegment] ? segments[pointedSegment].sum : 0;
+            if (pointedSum > 0) {
+                ctx.fillStyle = getColorForSum(pointedSum);
+                ctx.font = 'bold 14px Inter';
+                ctx.fillText(pointedSum.toLocaleString() + '₽', cx, cy + 30);
+            }
+            
+            // Внешняя рамка
+            ctx.beginPath();
+            ctx.arc(cx, cy, r, 0, Math.PI * 2);
+            ctx.strokeStyle = '#f59e0b';
+            ctx.lineWidth = 4;
+            ctx.stroke();
+        }
+
+        function spinSimpleRoulette() {
+            if (simpleRouletteSpinning) return;
+            
+            if (rouletteOptions.length === 0) {
+                alert('Сначала добавьте хотя бы один вариант (сумма + процент) и нажмите СОХРАНИТЬ!');
+                return;
+            }
+            
+            const usedPercent = rouletteOptions.reduce((s, o) => s + o.percent, 0);
+            if (usedPercent < 100) {
+                if (!confirm(`Занято только ${usedPercent}% из 100%. Остальные ${100 - usedPercent}% будут пустыми (проигрыш). Продолжить?`)) return;
+            }
+            
+            simpleRouletteSpinning = true;
+            const resultDiv = document.getElementById('simple-roulette-result');
+            resultDiv.innerHTML = '<span class="simple-roulette-result-text" style="color:#f59e0b;">🎰 КРУТИМ...</span>';
+            
+            const duration = (parseInt(document.getElementById('simple-dur-input').value) || 4) * 1000;
+            const startTime = performance.now();
+            
+            // Случайный сегмент (0-99)
+            const winningSegment = Math.floor(Math.random() * 100);
+            
+            // Определяем выигрыш
+            let segments = [];
+            rouletteOptions.forEach((opt) => {
+                for (let i = 0; i < opt.percent; i++) {
+                    segments.push(opt.sum);
+                }
+            });
+            while (segments.length < 100) segments.push(0);
+            
+            const winAmount = segments[winningSegment];
+            const isWin = winAmount > 0;
+            
+            let lastDrawn = -1;
+            
+            function animateSpin(timestamp) {
+                const elapsed = timestamp - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const ease = 1 - Math.pow(1 - progress, 3);
+                
+                // Показываем бегущий сегмент
+                const currentSegment = Math.floor(((winningSegment + 100 * 3 * (1 - ease)) % 100 + 100) % 100);
+                
+                if (currentSegment !== lastDrawn) {
+                    drawRoulette100(currentSegment);
+                    lastDrawn = currentSegment;
+                    if (currentSegment % 5 === 0) playTick();
+                }
+                
+                if (progress < 1) {
+                    requestAnimationFrame(animateSpin);
+                    return;
+                }
+                
+                // Финал - показываем выигрышный сегмент
+                drawRoulette100(winningSegment);
+                simpleRouletteSpinning = false;
+                
+                if (isWin) {
+                    resultDiv.innerHTML = `<span class="simple-roulette-result-text win">✅ ВЫИГРЫШ ${winAmount.toLocaleString()} ₽! (сегмент ${winningSegment + 1})</span>`;
+                    const depInput = document.getElementById('win-deposit-input');
+                    if (depInput) depInput.value = winAmount;
+                    playTick();
+                } else {
+                    resultDiv.innerHTML = `<span class="simple-roulette-result-text lose">❌ ПРОИГРЫШ (сегмент ${winningSegment + 1} пустой)</span>`;
+                }
+            }
+            
+            requestAnimationFrame(animateSpin);
+        }
+
+    </script>
+
+    <!-- SIMPLE PERCENTAGE ROULETTE MODAL -->
+    <div id="simple-roulette-modal" class="modal" style="z-index: 100001;">
+        <div class="modal-content">
+            <div class="close-x" onclick="closeSimpleRoulette()" style="color: #f59e0b;">&times;</div>
+            <h2 class="simple-roulette-title">🎰 РУЛЕТКА (100 УЧАСТКОВ)</h2>
+            
+            <div class="simple-roulette-inputs">
+                <div class="simple-roulette-input-group">
+                    <label>Сумма (₽)</label>
+                    <input type="number" id="simple-roulette-sum" placeholder="100" min="1">
+                </div>
+                <div class="simple-roulette-input-group">
+                    <label>Процент (%)</label>
+                    <input type="number" id="simple-roulette-percent" placeholder="20" min="1" max="100">
+                </div>
+            </div>
+            
+            <div style="display:flex; gap:10px; margin-bottom:15px; width:100%; max-width:400px;">
+                <button class="btn-main simple-roulette-btn" onclick="saveRouletteOption()" style="flex:1; margin-bottom:0; padding:12px; font-size:12px;">💾 СОХРАНИТЬ</button>
+                <button class="btn-main simple-roulette-btn" onclick="clearRouletteOptions()" style="flex:1; margin-bottom:0; padding:12px; font-size:12px; background:rgba(239,68,68,0.3) !important; border-color:#ef4444 !important;">🗑️ ОЧИСТИТЬ</button>
+            </div>
+            
+            <div id="saved-options-list" style="width:100%; max-width:500px; max-height:250px; overflow-y:auto; margin-bottom:15px; padding:15px; background:rgba(0,0,0,0.3); border-radius:10px; border:1px solid rgba(245,158,11,0.3);"></div>
+            
+            <div class="simple-roulette-canvas-container">
+                <canvas id="simple-roulette-canvas" width="500" height="500"></canvas>
+            </div>
+            
+            <div class="simple-roulette-result" id="simple-roulette-result">
+                <span class="simple-roulette-result-text">---</span>
+            </div>
+            
+            <div style="display: flex; flex-direction: column; gap: 8px; width: 100%; max-width: 300px; margin: 0 auto;">
+                <div style="text-align: center;">
+                    <label style="font-size: 13px; color: #f59e0b; font-weight: 700;">Время прокрута (сек):</label>
+                    <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 6px;">
+                        <button class="btn-main simple-roulette-btn" style="padding:6px 10px; margin-bottom:0; font-size:14px; min-width:36px;" onclick="adjustSimpleDur(-1)">-</button>
+                        <input type="number" id="simple-dur-input" min="1" max="60" value="4" style="width:50px; padding:4px; background:rgba(0,0,0,0.4); border:1px solid rgba(245,158,11,0.5); color:#fff; border-radius:4px; text-align:center; font-size:16px;">
+                        <button class="btn-main simple-roulette-btn" style="padding:6px 10px; margin-bottom:0; font-size:14px; min-width:36px;" onclick="adjustSimpleDur(1)">+</button>
+                    </div>
+                    <div style="display: flex; gap: 6px; margin-top: 6px; justify-content: center;">
+                        <button class="btn-main simple-roulette-btn" style="padding:4px 8px; margin-bottom:0; font-size:10px;" onclick="setSimpleDur(2)">2</button>
+                        <button class="btn-main simple-roulette-btn" style="padding:4px 8px; margin-bottom:0; font-size:10px;" onclick="setSimpleDur(4)">4</button>
+                        <button class="btn-main simple-roulette-btn" style="padding:4px 8px; margin-bottom:0; font-size:10px;" onclick="setSimpleDur(6)">6</button>
+                        <button class="btn-main simple-roulette-btn" style="padding:4px 8px; margin-bottom:0; font-size:10px;" onclick="setSimpleDur(10)">10</button>
+                    </div>
+                </div>
+                <button class="btn-main simple-roulette-btn" onclick="spinSimpleRoulette()" style="width: 100%; padding: 18px; font-size: 16px;">🎰 КРУТИТЬ!</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ADMIN LOGIN MODAL -->
+    <div id="admin-login-modal" style="display:none; position:fixed; inset:0; z-index:99999; align-items:center; justify-content:center; background:rgba(0,0,0,0.92); backdrop-filter:blur(12px);">
+        <div style="width:340px; padding:32px; border-radius:20px; background:rgba(10,10,20,0.98); border:1px solid rgba(255,255,255,0.08); box-shadow:0 0 40px rgba(0,0,0,0.6);">
+            <h3 style="margin:0 0 6px; color:#94a3b8; font-size:11px; letter-spacing:3px; text-transform:uppercase;">Доступ ограничен</h3>
+            <p style="margin:0 0 22px; color:#475569; font-size:12px;">Введите учётные данные для входа</p>
+            <div style="display:flex; flex-direction:column; gap:10px;">
+                <input id="admin-user-input" type="text" placeholder="Логин" style="width:100%; box-sizing:border-box; padding:11px 14px; border-radius:10px; background:#0f1626; border:1px solid rgba(255,255,255,0.08) !important; color:#e2e8f0 !important; font-size:14px;">
+                <input id="admin-pass-input" type="password" placeholder="Пароль" style="width:100%; box-sizing:border-box; padding:11px 14px; border-radius:10px; background:#0f1626; border:1px solid rgba(255,255,255,0.08) !important; color:#e2e8f0 !important; font-size:14px;">
+                <div id="admin-login-error" style="display:none; color:#ef4444; font-size:12px; text-align:center;">Неверный логин или пароль</div>
+                <button onclick="submitAdminLogin()" style="margin-top:4px; padding:12px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:10px; color:#e2e8f0; font-size:12px; font-weight:700; letter-spacing:2px; text-transform:uppercase; cursor:pointer;">ВОЙТИ</button>
+                <button onclick="closeAdminLogin()" style="padding:10px; background:none; border:none; color:#475569; font-size:11px; cursor:pointer; letter-spacing:1px;">ОТМЕНА</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ADMIN PANEL MODAL -->
+    <div id="admin-panel-modal" style="display:none; position:fixed; inset:0; z-index:99998; align-items:center; justify-content:center; background:rgba(0,0,0,0.92); backdrop-filter:blur(14px);">
+        <div style="width:min(820px,96vw); max-height:92vh; overflow-y:auto; border-radius:24px; background:#080c14; border:1px solid rgba(255,255,255,0.07); padding:36px; position:relative; box-shadow:0 0 60px rgba(0,0,0,0.8);">
+            <div onclick="closeAdminPanel()" style="position:absolute; right:20px; top:14px; font-size:26px; color:#475569; cursor:pointer; line-height:1;">&times;</div>
+            <div style="display:flex; align-items:center; gap:12px; margin-bottom:8px;">
+                <span style="font-size:20px;">🔧</span>
+                <h2 style="margin:0; color:#e2e8f0; font-size:18px; letter-spacing:1px;">ПАНЕЛЬ УПРАВЛЕНИЯ</h2>
+            </div>
+            <div style="margin-bottom:28px; padding:14px 18px; border-radius:12px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06);">
+                <div style="font-size:11px; color:#475569; letter-spacing:2px; text-transform:uppercase; margin-bottom:6px;">Текущий статус</div>
+                <div id="admin-rig-status" style="font-size:14px; font-weight:600;"><span style="color:#64748b;">Подкрутка отключена</span></div>
+            </div>
+
+            <div style="margin-bottom:20px; padding:12px 14px; border-radius:12px; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.04);">
+                <div style="font-size:11px; color:#475569; text-transform:uppercase; margin-bottom:8px;">Аккаунты (регистрации)</div>
+                <div id="admin-accounts-list" style="max-height:220px; overflow:auto;">(нет данных)</div>
+            </div>
+            <div style="margin-bottom:20px; padding:12px 14px; border-radius:12px; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.04);">
+                <div style="font-size:11px; color:#475569; text-transform:uppercase; margin-bottom:8px;">Добавить запись в статистику (ручной ввод)</div>
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; align-items:center;">
+                    <input id="manual-name" placeholder="Никнейм" style="padding:8px; border-radius:6px; background:#0b1220; border:1px solid rgba(255,255,255,0.04); color:#e2e8f0;">
+                    <input id="manual-tg" placeholder="Telegram @user" style="padding:8px; border-radius:6px; background:#0b1220; border:1px solid rgba(255,255,255,0.04); color:#e2e8f0;">
+                    <input id="manual-amount" placeholder="Вывод (₽)" type="number" style="padding:8px; border-radius:6px; background:#0b1220; border:1px solid rgba(255,255,255,0.04); color:#e2e8f0;">
+                    <input id="manual-deposit" placeholder="Депозит (₽)" type="number" style="padding:8px; border-radius:6px; background:#0b1220; border:1px solid rgba(255,255,255,0.04); color:#e2e8f0;">
+                    <select id="manual-site-select" style="padding:8px; border-radius:6px; background:#0b1220; border:1px solid rgba(255,255,255,0.04); color:#e2e8f0;"><option value="---">---</option></select>
+                    <input id="manual-date" placeholder="Дата (опционально)" style="padding:8px; border-radius:6px; background:#0b1220; border:1px solid rgba(255,255,255,0.04); color:#e2e8f0;">
+                </div>
+                <div style="margin-top:8px; text-align:right;"><button class="btn-main" onclick="addManualHistory()" style="padding:8px 12px;">Добавить в статистику</button></div>
+            </div>
+
+            <div style="margin-bottom:20px; padding:12px 14px; border-radius:12px; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.04);">
+                <div style="font-size:11px; color:#475569; text-transform:uppercase; margin-bottom:8px;">Управление списком сайтов (админ)</div>
+                <div style="display:flex; gap:8px; margin-bottom:8px;">
+                    <input id="site-option-input" placeholder="Добавить сайт" style="flex:1; padding:8px; border-radius:6px; background:#0b1220; border:1px solid rgba(255,255,255,0.04); color:#e2e8f0;">
+                    <button class="btn-main" onclick="addSiteOptionFromInput()" style="padding:8px 12px;">Добавить</button>
+                </div>
+                <div id="site-options-list" style="max-height:160px; overflow:auto;">(нет сайтов)</div>
+            </div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:20px;">
+                <div style="padding:24px; border-radius:16px; background:rgba(34,197,94,0.05); border:1px solid rgba(34,197,94,0.2);">
+                    <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
+                        <span style="font-size:18px;">⚡</span>
+                        <span style="color:#22c55e; font-weight:800; font-size:13px; letter-spacing:1px;">100% ПОДКРУТКА</span>
+                    </div>
+                    <p style="margin:0 0 14px; color:#64748b; font-size:12px; line-height:1.5;">Указанный ник будет побеждать всегда, пока не сброшено.</p>
+                    <input id="admin-nick-100" type="text" placeholder="Никнейм" style="width:100%; box-sizing:border-box; padding:10px 12px; border-radius:9px; background:#0a1020; border:1px solid rgba(34,197,94,0.25) !important; color:#e2e8f0 !important; font-size:13px; margin-bottom:10px;">
+                    <button onclick="adminSetRig100()" style="width:100%; padding:11px; background:rgba(34,197,94,0.12); border:1px solid rgba(34,197,94,0.3); border-radius:9px; color:#22c55e; font-size:11px; font-weight:800; letter-spacing:2px; text-transform:uppercase; cursor:pointer;">ВКЛЮЧИТЬ</button>
+                </div>
+                <div style="padding:24px; border-radius:16px; background:rgba(245,158,11,0.05); border:1px solid rgba(245,158,11,0.2);">
+                    <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
+                        <span style="font-size:18px;">🔥</span>
+                        <span style="color:#f59e0b; font-weight:800; font-size:13px; letter-spacing:1px;">НЕБОЛЬШАЯ ПОДКРУТКА</span>
+                    </div>
+                    <p style="margin:0 0 14px; color:#64748b; font-size:12px; line-height:1.5;">Ник получает повышенный шанс (~5× больше), но не 100%.</p>
+                    <input id="admin-nick-soft" type="text" placeholder="Никнейм" style="width:100%; box-sizing:border-box; padding:10px 12px; border-radius:9px; background:#0a1020; border:1px solid rgba(245,158,11,0.25) !important; color:#e2e8f0 !important; font-size:13px; margin-bottom:10px;">
+                    <div style="display:flex; gap:8px;">
+                        <button onclick="adminSetRigSoft()" style="flex:1; padding:11px; background:rgba(245,158,11,0.12); border:1px solid rgba(245,158,11,0.3); border-radius:9px; color:#f59e0b; font-size:10px; font-weight:800; letter-spacing:1px; text-transform:uppercase; cursor:pointer;">ПОСТОЯННО</button>
+                        <button onclick="adminSetRigOnce()" style="flex:1; padding:11px; background:rgba(167,139,250,0.1); border:1px solid rgba(167,139,250,0.3); border-radius:9px; color:#a78bfa; font-size:10px; font-weight:800; letter-spacing:1px; text-transform:uppercase; cursor:pointer;">ТОЛЬКО 1 РАЗ</button>
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="adminClearRig()" style="width:100%; padding:14px; background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.25); border-radius:12px; color:#ef4444; font-size:12px; font-weight:800; letter-spacing:3px; text-transform:uppercase; cursor:pointer;">⛔ УБРАТЬ ВСЮ ПОДКРУТКУ</button>
+        </div>
+    </div>
+
+    <!-- CLOSE CONFIRMATION MODAL -->
+    <div id="close-confirm-modal" style="display:none; position:fixed; inset:0; z-index:99999; align-items:center; justify-content:center; background:rgba(0,0,0,0.92); backdrop-filter:blur(12px);">
+        <div style="width:400px; padding:32px; border-radius:20px; background:rgba(10,10,20,0.98); border:1px solid var(--accent-neon-blue); box-shadow:0 0 40px rgba(0,0,0,0.6);">
+            <h3 style="margin:0 0 20px; color:var(--accent-neon-blue); font-size:16px; letter-spacing:2px; text-transform:uppercase; text-align:center;">Закрыть экран победителя?</h3>
+            <div style="display:flex; flex-direction:column; gap:12px;">
+                <button onclick="closeConfirmReroll()" style="width:100%; padding:16px; background:rgba(245,158,11,0.15); border:1px solid #f59e0b; border-radius:12px; color:#f59e0b; font-size:13px; font-weight:800; letter-spacing:2px; text-transform:uppercase; cursor:pointer; transition:0.3s;">🔄 ЗАПИСАТЬ КАК РЕРОЛЬНУТ</button>
+                <button onclick="closeConfirmJustClose()" style="width:100%; padding:16px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.15); border-radius:12px; color:#e2e8f0; font-size:13px; font-weight:800; letter-spacing:2px; text-transform:uppercase; cursor:pointer; transition:0.3s;">✖️ ПРОСТО ЗАКРЫТЬ</button>
+            </div>
+            <button onclick="closeConfirmModal()" style="width:100%; margin-top:12px; padding:12px; background:none; border:none; color:#475569; font-size:11px; cursor:pointer; letter-spacing:1px;">ОТМЕНА</button>
+        </div>
+    </div>
+
+    <script>
+        function showCloseConfirmModal() {
+            document.getElementById('close-confirm-modal').style.display = 'flex';
+        }
+        
+        function closeConfirmModal() {
+            document.getElementById('close-confirm-modal').style.display = 'none';
+        }
+        
+        function closeConfirmReroll() {
+            // Записываем как рерольнут
+            if (currentWinner) {
+                rerollCount++;
+                globalHistory.push({
+                    name: currentWinner,
+                    amount: 0,
+                    deposit: 0,
+                    site: '---',
+                    tg: getSavedTelegram(currentWinner) || '---',
+                    rerolls: rerollCount,
+                    isReroll: true,
+                    date: new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString()
+                });
+                saveToStorage();
+                cloudSaveAppStateDebounced();
+            }
+            // Закрываем модалку подтверждения
+            closeConfirmModal();
+            // Закрываем все модалки
+            closeModals();
+        }
+        
+        function closeConfirmJustClose() {
+            // Просто закрываем без записи
+            closeConfirmModal();
+            closeModals();
+        }
+
+        // ===== SOUND SELECTOR FUNCTIONS =====
+        let selectedTimerSound = localStorage.getItem('bot_timer_sound') || 'bell';
+        let soundPopupOpen = false;
+
+        function toggleSoundPopup() {
+            soundPopupOpen = !soundPopupOpen;
+            const popup = document.getElementById('sound-popup');
+            if (popup) {
+                popup.classList.toggle('show', soundPopupOpen);
+            }
+        }
+
+        // Закрываем popup при клике вне его
+        document.addEventListener('click', (e) => {
+            if (soundPopupOpen && !e.target.closest('.sound-selector-btn') && !e.target.closest('.sound-popup')) {
+                soundPopupOpen = false;
+                const popup = document.getElementById('sound-popup');
+                if (popup) popup.classList.remove('show');
+            }
+        });
+
+        function playSoundPreview(type) {
+            selectedTimerSound = type;
+            localStorage.setItem('bot_timer_sound', type);
+            playTimerEndSound(type);
+        }
+
+        function playTimerEndSound(type) {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            
+            switch(type) {
+                case 'bell':
+                    playBellSound();
+                    break;
+                case 'siren':
+                    playSirenSound();
+                    break;
+                case 'alarm':
+                    playAlarmClockSound();
+                    break;
+                case 'melody':
+                    playMelodySound();
+                    break;
+                case 'explosion':
+                    playExplosionSound();
+                    break;
+                case 'fanfare':
+                    playFanfareSound();
+                    break;
+                default:
+                    playAlarm();
+            }
+        }
+
+        function playBellSound() {
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(800 + i * 100, audioCtx.currentTime);
+                    gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.3);
+                }, i * 200);
+            }
+        }
+
+        function playSirenSound() {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.type = 'sawtooth';
+            gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+            
+            for (let i = 0; i < 6; i++) {
+                osc.frequency.setValueAtTime(400, audioCtx.currentTime + i * 0.5);
+                osc.frequency.linearRampToValueAtTime(800, audioCtx.currentTime + i * 0.5 + 0.25);
+                osc.frequency.linearRampToValueAtTime(400, audioCtx.currentTime + i * 0.5 + 0.5);
+            }
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 3);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 3);
+        }
+
+        function playAlarmClockSound() {
+            for (let i = 0; i < 8; i++) {
+                setTimeout(() => {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.type = 'square';
+                    osc.frequency.setValueAtTime(1200, audioCtx.currentTime);
+                    gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.1);
+                }, i * 150);
+            }
+        }
+
+        function playMelodySound() {
+            const notes = [523, 659, 784, 1047, 784, 659, 523];
+            notes.forEach((freq, i) => {
+                setTimeout(() => {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                    gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.3);
+                }, i * 200);
+            });
+        }
+
+        function playExplosionSound() {
+            const bufferSize = audioCtx.sampleRate * 0.5;
+            const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+            const data = buffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) {
+                data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / bufferSize, 2);
+            }
+            const source = audioCtx.createBufferSource();
+            const gain = audioCtx.createGain();
+            const filter = audioCtx.createBiquadFilter();
+            source.buffer = buffer;
+            filter.type = 'lowpass';
+            filter.frequency.setValueAtTime(1000, audioCtx.currentTime);
+            filter.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.5);
+            source.connect(filter);
+            filter.connect(gain);
+            gain.connect(audioCtx.destination);
+            gain.gain.setValueAtTime(0.5, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+            source.start();
+        }
+
+        function playFanfareSound() {
+            const notes = [392, 523, 659, 784, 1047, 784, 1047];
+            notes.forEach((freq, i) => {
+                setTimeout(() => {
+                    const osc = audioCtx.createOscillator();
+                    const osc2 = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.connect(gain);
+                    osc2.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.type = 'triangle';
+                    osc2.type = 'sine';
+                    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                    osc2.frequency.setValueAtTime(freq * 1.5, audioCtx.currentTime);
+                    gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+                    osc.start();
+                    osc2.start();
+                    osc.stop(audioCtx.currentTime + 0.4);
+                    osc2.stop(audioCtx.currentTime + 0.4);
+                }, i * 250);
+            });
+        }
+
+        // Переопределяем playAlarm для использования выбранной озвучки
+        const originalPlayAlarm = playAlarm;
+        playAlarm = function() {
+            playTimerEndSound(selectedTimerSound);
+        };
+
+    </script>
+
+</body>
+</html>
