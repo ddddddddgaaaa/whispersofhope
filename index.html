@@ -1217,9 +1217,7 @@
             <input type="number" id="win-amount-input" placeholder="Сумма вывода (RUB)">
             <input type="number" id="win-deposit-input" placeholder="Сумма депозита (RUB)">
             <input type="text" id="win-tg-input" placeholder="Telegram @username">
-            <select id="win-site-select" style="padding:8px; border-radius:6px; background:#0b1220; border:1px solid rgba(255,255,255,0.04); color:#e2e8f0;">
-                <option value="---">---</option>
-            </select>
+            <input type="text" id="win-site-input" placeholder="Проект / Сайт" style="padding:8px; border-radius:6px; background:#0b1220; border:1px solid rgba(255,255,255,0.04); color:#e2e8f0;">
             <button class="btn-main btn-purple" style="margin-top:10px" onclick="saveWinnerStats()">СОХРАНИТЬ 📊</button>
             <button class="btn-main" onclick="window.open('https://followage.showmasterokda.com/?user=' + currentWinner, '_blank')">ПОДПИСКИ 🔗</button>
             <button class="btn-main" onclick="window.open('https://www.twitch.tv/popout/' + currentChannelName + '/viewercard/' + currentWinner + '?popout=', '_blank')">СООБЩЕНИЯ</button>
@@ -2142,7 +2140,7 @@
             const amt = parseFloat(document.getElementById('win-amount-input').value) || 0; 
             const dep = parseFloat(document.getElementById('win-deposit-input').value) || 0; 
             const tg = document.getElementById('win-tg-input').value.trim(); 
-            const site = (document.getElementById('win-site-select') && document.getElementById('win-site-select').value) || '---'; 
+            const site = (document.getElementById('win-site-input') && document.getElementById('win-site-input').value.trim()) || '---'; 
             if (tg) { 
                 saveParticipantTelegram(currentWinner, tg); 
                 syncParticipantTelegramToCloud(currentWinner, tg); 
@@ -2158,8 +2156,7 @@
                 } else { 
                     leaders.push({name: currentWinner, amount: amt, deposits: dep, tg: tg, site: site}); 
                 } 
-            } 
-            // Записываем "НЕТ ИНФОРМАЦИИ" если поля пустые
+            }
             const finalTg = tg && tg !== '---' ? tg : 'НЕТ ИНФОРМАЦИИ';
             const finalSite = site && site !== '---' ? site : 'НЕТ ИНФОРМАЦИИ';
             const finalAmt = amt;
