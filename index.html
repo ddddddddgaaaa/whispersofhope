@@ -327,6 +327,52 @@
             border-left-color: var(--accent-neon-blue);
             background: var(--accent-soft-bg);
         }
+        .leaderboard-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+            border-radius: 14px;
+            overflow: hidden;
+        }
+        .leaderboard-table th {
+            padding: 12px 10px;
+            text-align: left;
+            color: var(--accent-neon-blue);
+            border-bottom: 2px solid var(--accent-neon-blue);
+            background: rgba(255, 20, 147, 0.08);
+            font-size: 11px;
+            letter-spacing: 0.08em;
+        }
+        .leaderboard-table td {
+            padding: 11px 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            vertical-align: middle;
+        }
+        .leaderboard-table tr[data-clickable="true"] {
+            cursor: pointer;
+            transition: background 0.25s ease;
+        }
+        .leaderboard-table tr[data-clickable="true"]:hover {
+            background: rgba(255, 20, 147, 0.08);
+        }
+        .leaderboard-empty {
+            color: #666;
+            text-align: center;
+            padding: 30px 0;
+        }
+        .leaderboard-rank {
+            color: var(--accent-neon-blue);
+            font-weight: 800;
+            margin-right: 6px;
+        }
+        .leaderboard-nick {
+            font-weight: 700;
+            color: #fff;
+        }
+        .leaderboard-site-empty {
+            color: #f59e0b;
+            font-weight: 700;
+        }
         .part-chip {
             font-size: 11px;
             background: var(--accent-soft-bg);
@@ -1991,6 +2037,52 @@
             leaders.forEach((item, i) => {
                 container.innerHTML += `<div class="leader-item" onclick="openLeaderEditModal('${item.name.replace(/'/g, "\\'")}')" style="cursor:pointer;"><div class="leader-row" style="display:flex; justify-content:space-between; align-items:center;"><span><b>${i+1}.</b> ${item.name}</span><div><b style="color:${getColorForSum(item.amount)};">${item.amount.toLocaleString()} ₽</b></div></div></div>`;
             });
+            saveToStorage();
+        }
+        renderLeaderboard = function() {
+            recalculateLeadersFromHistory();
+            leaders.sort((a,b) => b.amount - a.amount);
+            const container = document.getElementById('leaderboard');
+            if (!container) return;
+            if (!leaders.length) {
+                container.innerHTML = '<div class="leaderboard-empty">Нет выводов</div>';
+                saveToStorage();
+                return;
+            }
+
+            let html = `
+                <table class="leaderboard-table">
+                    <thead>
+                        <tr>
+                            <th>НИК</th>
+                            <th>ДЕП</th>
+                            <th>ВЫВОД</th>
+                            <th>САЙТ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            leaders.forEach((item, i) => {
+                const safeName = (item.name || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+                const nameDisplay = escapeHtml(item.name || '---');
+                const depositValue = typeof item.deposits === 'number' && !Number.isNaN(item.deposits) ? `${item.deposits.toLocaleString()} ₽` : '0 ₽';
+                const amountValue = typeof item.amount === 'number' && !Number.isNaN(item.amount) ? `${item.amount.toLocaleString()} ₽` : '0 ₽';
+                const siteMissing = !item.site || item.site === '---' || item.site === 'НЕТ ИНФОРМАЦИИ';
+                const siteValue = siteMissing ? 'НЕТ ИНФОРМАЦИИ' : escapeHtml(item.site);
+
+                html += `
+                    <tr data-clickable="true" onclick="openLeaderEditModal('${safeName}')">
+                        <td><span class="leaderboard-rank">${i + 1}.</span><span class="leaderboard-nick">${nameDisplay}</span></td>
+                        <td>${depositValue}</td>
+                        <td style="color:${getColorForSum(item.amount)}; font-weight:800;">${amountValue}</td>
+                        <td class="${siteMissing ? 'leaderboard-site-empty' : ''}">${siteValue}</td>
+                    </tr>
+                `;
+            });
+
+            html += '</tbody></table>';
+            container.innerHTML = html;
             saveToStorage();
         }
         
