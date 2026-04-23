@@ -373,6 +373,19 @@
             color: #f59e0b;
             font-weight: 700;
         }
+        .recent-table-wrap {
+            overflow-y: auto;
+            max-height: 260px;
+            flex-grow: 1;
+        }
+        .recent-reroll-row td {
+            color: #f59e0b;
+            font-weight: 700;
+        }
+        .recent-reroll-label {
+            color: #f59e0b;
+            font-weight: 800;
+        }
         .part-chip {
             font-size: 11px;
             background: var(--accent-soft-bg);
@@ -1173,13 +1186,11 @@
         <div class="panel panel-with-bg">
             <h3 style="margin:0 0 15px 0; color: var(--accent-neon-blue); text-shadow: none;">ТОП (ВЫВОДЫ)</h3>
             <div id="leaderboard" style="overflow-y:auto; flex-grow: 1;"></div>
+            <div style="margin-top:15px; padding-top:15px; border-top:1px solid rgba(255,255,255,0.08);">
+                <h3 style="margin:0 0 12px 0; color: var(--accent-neon-blue); text-shadow: none; font-size:14px;">ПОСЛЕДНИЕ ВЫПАДЕНИЯ</h3>
+                <div id="recent-winners" class="recent-table-wrap"></div>
+            </div>
             <div onclick="openAdminLogin()" style="position:absolute; bottom:2px; left:50%; transform:translateX(-50%); width:160px; height:22px; cursor:default; z-index:10000; background:transparent; border:none; outline:none;"></div>
-        </div>
-        
-        <!-- New section for recent winners -->
-        <div class="panel panel-with-bg" style="margin-top: 15px;">
-            <h3 style="margin:0 0 15px 0; color: var(--accent-neon-blue); text-shadow: none;">ВЫПАДЕНИЯ ЗА ПОСЛЕДНИЕ 12 ЧАСОВ</h3>
-            <div id="recent-winners" style="overflow-y:auto; max-height: 150px; flex-grow: 1;"></div>
         </div>
     </div>
     <div id="history-modal" class="modal"><div class="modal-content" style="flex-direction: column; min-width: 950px; height: 80vh;"><div class="close-x" onclick="closeModals()">&times;</div><h2 style="color: var(--accent-neon-blue); margin: 0; text-shadow: none;">Полная история выпадений</h2><div style="width: 100%; overflow-y: auto; margin-top: 20px;"><table class="stats-table" style="width: 100%; border-collapse: collapse;"><thead><tr><th style="padding: 12px;">Дата</th><th style="padding: 12px;">Никнейм</th><th style="padding: 12px;">Telegram</th><th style="padding: 12px;">Проект</th><th style="padding: 12px;">Выводы (₽)</th><th style="padding: 12px;">Депы (₽)</th><th style="padding: 12px;">Рероллы</th><th style="padding: 12px;">Действие</th></tr></thead><tbody id="history-body"></tbody></table></div></div></div>
@@ -2046,6 +2057,7 @@
             if (!container) return;
             if (!leaders.length) {
                 container.innerHTML = '<div class="leaderboard-empty">Нет выводов</div>';
+                renderRecentWinners();
                 saveToStorage();
                 return;
             }
@@ -2083,7 +2095,93 @@
 
             html += '</tbody></table>';
             container.innerHTML = html;
+            renderRecentWinners();
             saveToStorage();
+        }
+        
+        function parseHistoryDate(value) {
+            if (!value) return null;
+            const nativeDate = new Date(value);
+            if (!Number.isNaN(nativeDate.getTime())) return nativeDate;
+
+            const match = String(value).match(/(\d{1,2})[./](\d{1,2})[./](\d{2,4})(?:,\s*|\s+)(\d{1,2}):(\d{2})(?::(\d{2}))?/);
+            if (!match) return null;
+            const day = parseInt(match[1], 10);
+            const month = parseInt(match[2], 10) - 1;
+            let year = parseInt(match[3], 10);
+            if (year < 100) year += 2000;
+            const hours = parseInt(match[4], 10);
+            const minutes = parseInt(match[5], 10);
+            const seconds = parseInt(match[6] || '0', 10);
+            return new Date(year, month, day, hours, minutes, seconds);
+        }
+
+        function renderRecentWinners() {
+            const container = document.getElementById('recent-winners');
+            if (!container) return;
+
+            const now = Date.now();
+            const recentItems = [...globalHistory]
+                .filter(item => {
+                    const parsedDate = parseHistoryDate(item.date);
+                    if (!parsedDate) return false;
+                    return now - parsedDate.getTime() <= 12 * 60 * 60 * 1000;
+                })
+                .sort((a, b) => {
+                    const dateA = parseHistoryDate(a.date);
+                    const dateB = parseHistoryDate(b.date);
+                    return (dateB ? dateB.getTime() : 0) - (dateA ? dateA.getTime() : 0);
+                });
+
+            if (!recentItems.length) {
+                container.innerHTML = '<div class="leaderboard-empty">За последние 12 часов выпадений нет</div>';
+                return;
+            }
+
+            let html = `
+                <table class="leaderboard-table">
+                    <thead>
+                        <tr>
+                            <th>НИК</th>
+                            <th>ДЕП</th>
+                            <th>ВЫВОД</th>
+                            <th>САЙТ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            recentItems.forEach((item) => {
+                const nameDisplay = escapeHtml(item.name || '---');
+                if (item.isReroll) {
+                    html += `
+                        <tr class="recent-reroll-row">
+                            <td>${nameDisplay}</td>
+                            <td><span class="recent-reroll-label">РЕРОЛ</span></td>
+                            <td><span class="recent-reroll-label">РЕРОЛ</span></td>
+                            <td><span class="recent-reroll-label">РЕРОЛ</span></td>
+                        </tr>
+                    `;
+                    return;
+                }
+
+                const depositValue = typeof item.deposit === 'number' && !Number.isNaN(item.deposit) ? `${item.deposit.toLocaleString()} ₽` : '0 ₽';
+                const amountValue = typeof item.amount === 'number' && !Number.isNaN(item.amount) ? `${item.amount.toLocaleString()} ₽` : '0 ₽';
+                const siteMissing = !item.site || item.site === '---' || item.site === 'НЕТ ИНФОРМАЦИИ';
+                const siteValue = siteMissing ? 'НЕТ ИНФОРМАЦИИ' : escapeHtml(item.site);
+
+                html += `
+                    <tr>
+                        <td><span class="leaderboard-nick">${nameDisplay}</span></td>
+                        <td>${depositValue}</td>
+                        <td style="color:${getColorForSum(item.amount || 0)}; font-weight:800;">${amountValue}</td>
+                        <td class="${siteMissing ? 'leaderboard-site-empty' : ''}">${siteValue}</td>
+                    </tr>
+                `;
+            });
+
+            html += '</tbody></table>';
+            container.innerHTML = html;
         }
         
         function copyParticipants() { 
@@ -2805,6 +2903,7 @@
         initCloudProfiles();
         try { loadSiteOptionsFromCloud(); subscribeSiteOptionsFromCloud(); } catch(e) { try { renderSiteSelects(); renderSiteOptionsList(); } catch(_) {} }
         renderLeaderboard();
+        renderRecentWinners();
         updateFullParticipantsList();
         // load wheel participants from localStorage (if any)
         try { wheelParticipants = JSON.parse(localStorage.getItem('bot_wheel_participants') || '[]'); } catch(e) { wheelParticipants = []; }
@@ -2815,6 +2914,7 @@
             initTwitchEmbed();
             connectTwitchSocket();
         }
+        setInterval(renderRecentWinners, 60000);
         // openAuthModal(); // Отключено - не показывать окно входа автоматически
 
         // ============================================================
