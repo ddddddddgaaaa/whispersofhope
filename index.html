@@ -373,10 +373,28 @@
             color: #f59e0b;
             font-weight: 700;
         }
+        .leaderboard-table-wrap {
+            display: block;
+            overflow-y: auto;
+            flex: 0 0 auto;
+            min-height: 0;
+        }
+        .leaderboard-table-wrap.has-scrollbar {
+            max-height: 266px;
+            padding-right: 4px;
+        }
+        .recent-section {
+            margin-top: auto;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255,255,255,0.08);
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+        }
         .recent-table-wrap {
             overflow-y: auto;
             max-height: 260px;
-            flex-grow: 1;
+            flex: 0 0 auto;
         }
         .recent-reroll-row td {
             color: #f59e0b;
@@ -1185,8 +1203,8 @@
         </div>
         <div class="panel panel-with-bg">
             <h3 style="margin:0 0 15px 0; color: var(--accent-neon-blue); text-shadow: none;">ТОП (ВЫВОДЫ)</h3>
-            <div id="leaderboard" style="overflow-y:auto; flex-grow: 1;"></div>
-            <div style="margin-top:15px; padding-top:15px; border-top:1px solid rgba(255,255,255,0.08);">
+            <div id="leaderboard" class="leaderboard-table-wrap"></div>
+            <div class="recent-section">
                 <h3 style="margin:0 0 12px 0; color: var(--accent-neon-blue); text-shadow: none; font-size:14px;">ПОСЛЕДНИЕ ВЫПАДЕНИЯ</h3>
                 <div id="recent-winners" class="recent-table-wrap"></div>
             </div>
@@ -2056,6 +2074,7 @@
             const container = document.getElementById('leaderboard');
             if (!container) return;
             if (!leaders.length) {
+                container.classList.remove('has-scrollbar');
                 container.innerHTML = '<div class="leaderboard-empty">Нет выводов</div>';
                 renderRecentWinners();
                 saveToStorage();
@@ -2095,6 +2114,7 @@
 
             html += '</tbody></table>';
             container.innerHTML = html;
+            container.classList.toggle('has-scrollbar', leaders.length >= 5);
             renderRecentWinners();
             saveToStorage();
         }
