@@ -42,7 +42,11 @@
             height: 100vh;
             overflow: hidden;
         }
-        .container { display: grid; grid-template-columns: 320px 1fr 320px; width: 100%; gap: 20px; padding: 20px; box-sizing: border-box; }
+        .container { display: grid; grid-template-columns: 320px 1fr 320px; width: 100%; gap: 20px; padding: 20px; box-sizing: border-box; transition: grid-template-columns 0.25s ease, gap 0.25s ease; }
+        .container.top-panel-hidden {
+            grid-template-columns: 320px 1fr 0;
+            gap: 20px 0;
+        }
         .panel {
             background: var(--panel-bg);
             border-radius: 20px;
@@ -56,6 +60,18 @@
         }
         .menu-panel {
             overflow: hidden;
+        }
+        .top-panel {
+            overflow: hidden;
+            transition: opacity 0.25s ease, transform 0.25s ease, padding 0.25s ease, border-color 0.25s ease;
+        }
+        .container.top-panel-hidden .top-panel {
+            opacity: 0;
+            pointer-events: none;
+            transform: translateX(20px);
+            padding-left: 0;
+            padding-right: 0;
+            border-color: transparent;
         }
         .menu-panel > *:not(.menu-ambient) {
             position: relative;
@@ -1143,6 +1159,7 @@
             <button class="btn-main btn-purple" onclick="instantRoll()">БЫСТРЫЙ РОЛЛ</button>
             <button class="btn-main" onclick="openStats()">АНАЛИТИКА ПРОЕКТОВ</button>
             <button class="btn-main" onclick="openHistory()">ИСТОРИЯ ВЫПАДЕНИЙ</button>
+            <button id="leaderboard-toggle-btn" class="btn-main btn-purple" onclick="toggleTopPanel()">ТОП ЗА СТРИМ</button>
             <div style="margin-top: auto;">
                 <div id="timer" class="timer-display" onclick="enableTimerEdit()">00:10:00</div>
                 <input type="text" id="timer-input" style="display:none; width: 100%; background: #000; color: #ff1493; border: 1px solid #ff1493; font-size: 30px; text-align: center;">
@@ -1201,7 +1218,7 @@
                 </div>
             </div>
         </div>
-        <div class="panel panel-with-bg">
+        <div id="top-panel" class="panel panel-with-bg top-panel">
             <h3 style="margin:0 0 15px 0; color: var(--accent-neon-blue); text-shadow: none;">ТОП (ВЫВОДЫ)</h3>
             <div id="leaderboard" class="leaderboard-table-wrap"></div>
             <div class="recent-section">
@@ -1334,6 +1351,7 @@
         let wheelParticipants = [];
         let isWheelSpinning = false; // флаг блокировки обновления wheelParticipants во время крута
         let pendingParticipants = JSON.parse(localStorage.getItem('bot_pending_participants') || '[]'); // участники, которые написали кодовое пока рулетка открыта
+        let isTopPanelVisible = JSON.parse(localStorage.getItem('bot_top_panel_visible') || 'false');
         const wheelColors = ['#0f172a','#1e2937','#334155','#475569','#64748b','#1e3a8a','#312e81','#4338ca','#4c1d95','#6b21a8'];
         
         // Color coding based on sum ranges
@@ -1343,6 +1361,19 @@
             if (sum >= 301 && sum <= 500) return '#ef4444'; // красный (red)
             if (sum >= 501 && sum <= 1000) return '#eab308'; // желтый (yellow)
             return '#64748b'; // default gray
+        }
+        function applyTopPanelVisibility() {
+            const container = document.querySelector('.container');
+            const toggleBtn = document.getElementById('leaderboard-toggle-btn');
+            if (!container || !toggleBtn) return;
+            container.classList.toggle('top-panel-hidden', !isTopPanelVisible);
+            toggleBtn.classList.toggle('is-active-mode', isTopPanelVisible);
+            toggleBtn.textContent = isTopPanelVisible ? 'СКРЫТЬ ТОП' : 'ТОП ЗА СТРИМ';
+        }
+        function toggleTopPanel() {
+            isTopPanelVisible = !isTopPanelVisible;
+            localStorage.setItem('bot_top_panel_visible', JSON.stringify(isTopPanelVisible));
+            applyTopPanelVisibility();
         }
         let currentChannelName = localStorage.getItem('bot_channel_name') || '';
         const MODS = [];
@@ -1645,6 +1676,8 @@
             localStorage.setItem('bot_channel_name', currentChannelName);
             // participants не сохраняем в localStorage, они идут из Firebase
         }
+
+        applyTopPanelVisibility();
 
         // ===== Firebase app state sync (leaders + history) =====
         let _cloudSaveTimeout = null;
