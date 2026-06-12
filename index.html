@@ -1211,9 +1211,9 @@
                     <button class="btn-main" style="margin: 10px 12px; width: calc(100% - 24px);" onclick="copyParticipants()">СКОПИРОВАТЬ УЧАСТНИКОВ</button>
                 </div>
                 <div class="orange-chat">
-                    <h3>TWITCH CHAT VADYMS22</h3>
+                    <h3>W.TV CHAT VADYMS22</h3>
                     <div class="chat-container">
-                        <iframe id="twitch-chat-frame" title="Twitch chat for vadyms22" loading="lazy" allow="clipboard-write"></iframe>
+                        <iframe id="twitch-chat-frame" title="W.tv chat for vadyms22" loading="lazy" allow="clipboard-write"></iframe>
                     </div>
                 </div>
             </div>
@@ -1267,9 +1267,9 @@
     <div id="auth-modal" class="auth-modal">
         <div class="auth-card">
             <h2>Вход</h2>
-            <p>Укажи канал Twitch. После этого подключится чат.</p>
+            <p>Укажи канал W.tv. После этого подключится чат.</p>
             <div class="auth-form">
-                <input type="text" id="auth-channel-input" placeholder="Канал Twitch без @" autocomplete="off">
+                <input type="text" id="auth-channel-input" placeholder="Канал W.tv без @" autocomplete="off">
                 <div style="display:flex; gap:8px;">
                     <button class="btn-main btn-purple" type="button" onclick="applyAuthSettings()">ПОДКЛЮЧИТЬ</button>
                 </div>
@@ -1312,7 +1312,7 @@
             <input type="text" id="win-site-input" placeholder="Проект / Сайт" style="padding:8px; border-radius:6px; background:#0b1220; border:1px solid rgba(255,255,255,0.04); color:#e2e8f0;">
             <button class="btn-main btn-purple" style="margin-top:10px" onclick="saveWinnerStats()">СОХРАНИТЬ 📊</button>
             <button class="btn-main" onclick="window.open('https://followage.showmasterokda.com/?user=' + currentWinner, '_blank')">ПОДПИСКИ 🔗</button>
-            <button class="btn-main" onclick="window.open('https://www.twitch.tv/popout/' + currentChannelName + '/viewercard/' + currentWinner + '?popout=', '_blank')">СООБЩЕНИЯ</button>
+            <button class="btn-main" onclick="window.open('https://w.tv/' + currentChannelName, '_blank')">КАНАЛ W.TV</button>
             <button class="btn-main" onclick="showCloseConfirmModal()">ЗАКРЫТЬ</button>
             <button class="btn-main btn-purple" onclick="reSpinToHome()">ПЕРЕКРУТИТЬ</button>
         </div>
@@ -1935,7 +1935,7 @@
         function updateChannelUi() {
             const title = document.querySelector('.orange-chat h3');
             if (title) {
-                title.textContent = currentChannelName ? `TWITCH CHAT ${currentChannelName.toUpperCase()}` : 'TWITCH CHAT';
+                title.textContent = currentChannelName ? `W.TV CHAT ${currentChannelName.toUpperCase()}` : 'W.TV CHAT';
             }
             document.title = currentChannelName
                 ? `Бот для прокачек от vadyms22 - ${currentChannelName}`
@@ -1961,9 +1961,9 @@
             document.getElementById('auth-channel-input').value = '';
             document.getElementById('auth-modal').style.display = 'flex';
         }
-        function openAuthHelp() {
-            alert('Ввод: укажите Twitch ник. Если такой аккаунт не зарегистрирован — введите пароль и нажмите ВОЙТИ/РЕГИСТРАЦИЯ чтобы создать локальный/облачный аккаунт. Пароли хранятся в зашифрованном виде (SHA-256 + salt).');
-        }
+         function openAuthHelp() {
+             alert('Ввод: укажите W.tv ник. Если такой аккаунт не зарегистрирован — введите пароль и нажмите ВОЙТИ/РЕГИСТРАЦИЯ чтобы создать локальный/облачный аккаунт. Пароли хранятся в зашифрованном виде (SHA-256 + salt).');
+         }
         function closeAuthModal() {
             document.getElementById('auth-modal').style.display = 'none';
         }
@@ -2270,8 +2270,7 @@
                 frame.removeAttribute('src');
                 return;
             }
-            const parentDomain = window.location.hostname || 'localhost';
-            frame.src = `https://www.twitch.tv/embed/${safeChannelName}/chat?parent=${encodeURIComponent(parentDomain)}&darkpopout`;
+            frame.src = `https://w.tv/${safeChannelName}/chat`;
         }
         function updateTimerDisplay() { const h = Math.floor(timerSeconds/3600).toString().padStart(2,'0'), m = Math.floor((timerSeconds%3600)/60).toString().padStart(2,'0'), s = (timerSeconds%60).toString().padStart(2,'0'); document.getElementById('timer').innerText = `${h}:${m}:${s}`; }
         function toggleTimer() { timerRunning = !timerRunning; if(audioCtx.state === 'suspended') audioCtx.resume(); }
